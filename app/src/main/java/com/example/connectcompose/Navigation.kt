@@ -30,10 +30,19 @@ fun Navigation(
             Welcome(modifier = Modifier,navController = navController)
         }
         composable(route = Screen.StudentEntry.route){
-            ContactScreen(state = state, onEvent = onEvent)
+            ContactScreen(state = state, onEvent = onEvent,navController = navController)
         }
         composable(route = Screen.StudentReport.route){
             StudentReport()
+        }
+        composable(route = Screen.MessageFrag.route){
+            MessageFrag(onEvent = onEvent, state = state, navController = navController)
+        }
+        composable(route = Screen.ReportFrag.route){
+            ReportFrag(onEvent = onEvent, state = state, navController = navController)
+        }
+        composable(route = Screen.FinalList.route){
+            FinalList(onEvent= onEvent,state = state)
         }
 
 

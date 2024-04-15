@@ -1,6 +1,8 @@
 package com.example.connectcompose
 
 
+import android.telephony.SmsManager
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -155,6 +157,48 @@ class ContactViewModel(
 
             }
 
+            is ContactEvent.AbsentContact -> {
+                _state.update {
+                    val b = _state.value.absent.toMutableList()
+                    b.add(event.phoneNumber)
+
+
+
+                    it.copy(
+                        absent = b
+                    )
+                }
+            }
+            ContactEvent.SendMessage -> {
+                for(i in _state.value.absent) {
+                    val number: String = i
+                    var msg = "Your Child is absent the time of receiving this message so worry"
+                    if(state.value.message.isNotBlank()){
+                        msg = state.value.message
+                    }
+                    try {
+                        val smsManager: SmsManager = SmsManager.getDefault()
+                        smsManager.sendTextMessage(number, null, msg, null, null)
+                        Log.d("Message", "Message is send")
+                    } catch (e: Exception) {
+                        Log.d("Message", "Message not send")
+                    }
+
+                }
+            }
+
+            is ContactEvent.DeleteFinalList -> {
+
+                _state.update {
+                    val b = _state.value.absent.toMutableList()
+                    b.remove(event.phoneNumber)
+                    it.copy(
+                        absent = b
+                    )
+                }
+
+
+            }
         }
 
     }

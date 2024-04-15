@@ -1,6 +1,7 @@
 package com.example.connectcompose
 
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DrawerValue
@@ -37,15 +41,53 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContactScreen(
     state : ContactState,
-    onEvent: (ContactEvent) -> Unit
+    onEvent: (ContactEvent) -> Unit,
+    navController : NavController
 ){
 
+
+
     Scaffold(
+
+        topBar = {
+
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .padding(10.dp)
+            ){
+                Button(onClick = {
+                    if(state.isMenuOpen){
+                        onEvent(ContactEvent.HideMenu)
+                    }
+                    else {
+                        onEvent(ContactEvent.ShowMenu)
+                    }
+                },
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)) {
+                    Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu icon to access other screens" )
+
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                Button(onClick = {
+                                 navController.navigate(Screen.FinalList.route)
+                },
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)) {
+                    Icon(imageVector = Icons.Default.Check, contentDescription = "Move to final list of absent students")
+
+                }
+            }
+
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(ContactEvent.ShowDialog)
@@ -58,6 +100,18 @@ fun ContactScreen(
         if(state.isAddingContact){
             DialogWithOutImage(state = state, onEvent = onEvent, modifier = Modifier)
         }
+
+
+        ///new menu
+
+
+
+
+
+
+
+
+        ///new menu
         /////menu
 
 
@@ -79,59 +133,6 @@ fun ContactScreen(
             }
         }
 
-        if(state.isMessageOpen){
-
-            Message(state = state,onEvent = onEvent)
-
-
-        }
-
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            drawerContent = {
-                ModalDrawerSheet(
-                    Modifier
-                        .padding(10.dp)
-                        .width(250.dp)
-
-                ) {
-                    Spacer(modifier = Modifier
-                        .weight(1f))
-                    TextButton(onClick = { /*TODO*/ },modifier = Modifier
-                        .fillMaxWidth()) {
-                        Text(text = "Import CSV")
-
-                    }
-                    TextButton(onClick = {
-                        onEvent(ContactEvent.ShowReport)
-                    },modifier = Modifier
-                        .fillMaxWidth()) {
-                        Text(text = "Report")
-
-                    }
-                    TextButton(onClick = {
-                        onEvent(ContactEvent.ShowMessage)
-                    },modifier = Modifier
-                        .fillMaxWidth()) {
-                        Text(text = "Message")
-
-                    }
-                    Spacer(modifier = Modifier
-                        .weight(1f))
-
-                }
-            }
-        ) {
-
-        }
-
-
-
-
-
-
-
-
 
 
 
@@ -144,6 +145,7 @@ fun ContactScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
+
             item {
                 Row(
                     modifier = Modifier
@@ -168,13 +170,18 @@ fun ContactScreen(
             }
             items(state.contacts){contact->
                 Row(modifier = Modifier
-                    .fillMaxWidth()) {
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)) {
                     Column(modifier = Modifier
                         .weight(1f)) {
                         Text(contact.firstName,fontSize = 20.sp)
                         Text(contact.phoneNumber,fontSize = 12.sp)
                     }
                     IconButton(onClick = {
+                        onEvent(ContactEvent.AbsentContact(contact.phoneNumber))
+                        for(i in state.absent){
+                            Log.d("Absent",i)
+                        }
                         onEvent(ContactEvent.DeleteContact(contact))
                     }) {
                         Icon(imageVector = Icons.Default.Delete
@@ -184,6 +191,52 @@ fun ContactScreen(
                 }
             }
 
+
+
+        }
+
+
+
+        if(state.isMenuOpen){
+
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                drawerContent = {
+                    ModalDrawerSheet(
+                        Modifier
+                            .padding(10.dp)
+                            .width(250.dp)
+
+                    ) {
+                        Spacer(modifier = Modifier
+                            .weight(1f))
+                        TextButton(onClick = { /*TODO*/ },modifier = Modifier
+                            .fillMaxWidth()) {
+                            Text(text = "Import CSV")
+
+                        }
+                        TextButton(onClick = {
+                            navController.navigate(Screen.ReportFrag.route)
+                        },modifier = Modifier
+                            .fillMaxWidth()) {
+                            Text(text = "Report")
+
+                        }
+                        TextButton(onClick = {
+                            navController.navigate(Screen.MessageFrag.route)
+                        },modifier = Modifier
+                            .fillMaxWidth()) {
+                            Text(text = "Message")
+
+                        }
+                        Spacer(modifier = Modifier
+                            .weight(1f))
+
+                    }
+                }
+            ) {
+
+            }
 
 
         }

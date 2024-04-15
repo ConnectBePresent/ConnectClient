@@ -10,12 +10,15 @@ sealed interface ContactEvent {
     object HideDialog : ContactEvent
     data class SortContacts(val sortType: SortType) : ContactEvent
     data class DeleteContact(val contact : Contact) : ContactEvent
+    data class AbsentContact(val phoneNumber: String) : ContactEvent
+    data class DeleteFinalList(val phoneNumber: String): ContactEvent
     object ShowMenu : ContactEvent
     object HideMenu : ContactEvent
     object ShowReport : ContactEvent
     object HideReport : ContactEvent
     object ShowMessage : ContactEvent
     object HideMessage : ContactEvent
+    object SendMessage : ContactEvent
 
 
 }

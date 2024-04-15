@@ -43,7 +43,6 @@ fun Loginpage1(
         }
         Row(modifier = modifier
             .fillMaxWidth(1f)
-            .clip(RoundedCornerShape(15.dp))
         ){
 
            TextSection(modifier = modifier,
@@ -60,8 +59,9 @@ fun TextSection(modifier : Modifier,
     Column(modifier = modifier
         .fillMaxHeight(1f)
         .padding(30.dp)
+        .clip(RoundedCornerShape(15.dp))
         .background(colorResource(id = R.color.purple_200))
-        .clip(RoundedCornerShape(15.dp)),
+        ,
         verticalArrangement = Arrangement.SpaceBetween){
         Row(
             modifier = Modifier
