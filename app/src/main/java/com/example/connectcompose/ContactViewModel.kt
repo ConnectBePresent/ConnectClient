@@ -160,7 +160,7 @@ class ContactViewModel(
             is ContactEvent.AbsentContact -> {
                 _state.update {
                     val b = _state.value.absent.toMutableList()
-                    b.add(event.phoneNumber)
+                    b.add(event.contact)
 
 
 
@@ -171,7 +171,7 @@ class ContactViewModel(
             }
             ContactEvent.SendMessage -> {
                 for(i in _state.value.absent) {
-                    val number: String = i
+                    val number: String = i.phoneNumber
                     var msg = "Your Child is absent the time of receiving this message so worry"
                     if(state.value.message.isNotBlank()){
                         msg = state.value.message
@@ -191,7 +191,7 @@ class ContactViewModel(
 
                 _state.update {
                     val b = _state.value.absent.toMutableList()
-                    b.remove(event.phoneNumber)
+                    b.remove(event.contact)
                     it.copy(
                         absent = b
                     )

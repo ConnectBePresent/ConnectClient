@@ -24,7 +24,7 @@ fun ReportFrag(
     state: ContactState,
     navController : NavController
 ){
- val timeState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
+  val timeState = rememberDatePickerState(initialDisplayMode = DisplayMode.Input)
 
     Column(modifier = Modifier
         .padding(10.dp)){

@@ -11,7 +11,7 @@ data class ContactState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val isMenuOpen: Boolean = false,
     val isReportOpen: Boolean = false,
     val isMessageOpen: Boolean = false,
-    val absent: List<String> = mutableListOf(),
+    val absent: List<Contact> = mutableListOf(),
     val sortType: SortType = SortType.FIRST_NAME,
 
 

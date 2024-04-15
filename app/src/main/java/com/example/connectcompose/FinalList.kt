@@ -65,7 +65,8 @@ fun FinalList(
                     Column(modifier = Modifier
                         .weight(1f)) {
 
-                        Text(contact,fontSize = 20.sp)
+                        Text(contact.firstName,fontSize = 20.sp)
+                        Text(contact.phoneNumber,fontSize = 20.sp)
                     }
                     IconButton(onClick = {
                              onEvent(ContactEvent.DeleteFinalList(contact))

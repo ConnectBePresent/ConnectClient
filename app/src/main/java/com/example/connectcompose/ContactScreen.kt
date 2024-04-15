@@ -178,9 +178,9 @@ fun ContactScreen(
                         Text(contact.phoneNumber,fontSize = 12.sp)
                     }
                     IconButton(onClick = {
-                        onEvent(ContactEvent.AbsentContact(contact.phoneNumber))
+                        onEvent(ContactEvent.AbsentContact(contact))
                         for(i in state.absent){
-                            Log.d("Absent",i)
+                            Log.d("Absent",i.firstName)
                         }
                         onEvent(ContactEvent.DeleteContact(contact))
                     }) {
