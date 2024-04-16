@@ -13,27 +13,19 @@ import com.example.connectcompose.ui.theme.ConnectComposeTheme
 
 class MainActivity : ComponentActivity() {
 
-    //mark
-
     private val db by lazy {
         Room.databaseBuilder(
-            applicationContext,
-            ContactDatabase::class.java,
-            "contacts.db"
+            applicationContext, ContactDatabase::class.java, "contacts.db"
         ).build()
     }
 
-    private val viewModel by viewModels<ContactViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory{
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ContactViewModel(db.dao) as T
-                }
+    private val viewModel by viewModels<ContactViewModel>(factoryProducer = {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return ContactViewModel(db.dao) as T
             }
         }
-    )
-
-    //mark
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +33,7 @@ class MainActivity : ComponentActivity() {
             ConnectComposeTheme {
                 // A surface container using the 'background' color from the theme
                 val state by viewModel.state.collectAsState()
-                Navigation( state = state, onEvent = viewModel::onEvent)
+                Navigation(state = state, onEvent = viewModel::onEvent)
             }
         }
     }
