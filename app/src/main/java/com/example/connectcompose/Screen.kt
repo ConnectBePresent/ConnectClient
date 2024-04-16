@@ -9,4 +9,5 @@ sealed class Screen(val route : String) {
     object MessageFrag : Screen("messageFrag")
     object ReportFrag : Screen("reportFrag")
     object FinalList : Screen("finalList")
+    object LoginPage2 : Screen("loginPage2")
 }

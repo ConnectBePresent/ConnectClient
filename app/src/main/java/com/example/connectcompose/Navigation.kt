@@ -44,6 +44,9 @@ fun Navigation(
         composable(route = Screen.FinalList.route){
             FinalList(onEvent= onEvent,state = state)
         }
+        composable(route = Screen.LoginPage2.route){
+            Loginpage2(modifier = Modifier)
+        }
 
 
 

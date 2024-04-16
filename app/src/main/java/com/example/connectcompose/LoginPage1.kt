@@ -118,15 +118,19 @@ fun TextSection(modifier : Modifier,
                     fontSize = 20.sp)
                 
             }
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+
+                navController.navigate(Screen.LoginPage2.route)
+
+            }) {
                 Text(text = "Institute"
                     ,color = Color.Black,
                     fontSize = 20.sp)
             }
         }
 
-        
-        
+
+
     }
-    
+
 }
