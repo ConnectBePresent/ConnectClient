@@ -34,9 +34,9 @@ import com.google.firebase.ktx.Firebase
 fun Loginpage2(
     modifier : Modifier
 ){
-    val instituteId by remember { mutableStateOf("") }
-    val email by remember { mutableStateOf("") }
-    val password by remember { mutableStateOf("") }
+    var instituteId by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var loginStatus by remember { mutableStateOf("") }
 
     fun checkLoginCredentials(
@@ -102,10 +102,9 @@ fun Loginpage2(
                         verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(text = "Login",fontSize= 30.sp, color = Color.Black)
 
-                        TextField(value = instituteId, onValueChange = {}, placeholder = { Text("Institute ID")})
-                        TextField(value = email, onValueChange = {}, placeholder = { Text("Username")})
-
-                        TextField(value = password, onValueChange = {},visualTransformation = PasswordVisualTransformation(), placeholder = { Text("Password")})
+                        TextField(value = instituteId, onValueChange = { instituteId = it }, placeholder = { Text("Institute ID")})
+                        TextField(value = email, onValueChange = { email = it }, label = { Text("Username")})
+                        TextField(value = password, onValueChange = { password = it },visualTransformation = PasswordVisualTransformation(), placeholder = { Text("Password")})
 
                     }
 
