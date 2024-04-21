@@ -14,22 +14,55 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 
 @Composable
 fun Loginpage2(
     modifier : Modifier
 ){
+    var instituteId by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var loginStatus by remember { mutableStateOf("") }
 
+    fun checkLoginCredentials(
+        instituteId: String,
+        teacherEmail: String,
+        teacherPassword: String,
+        onSuccess: () -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+        val dbReference = Firebase.database.reference.child("institutes").child(instituteId)
+
+        dbReference.get().addOnSuccessListener { dataSnapshot ->
+            if (dataSnapshot.exists()) {
+                val classes = dataSnapshot.child("classList").children
+                val validLogin = classes.any { classData ->
+                    classData.child("teacherEmail").value == teacherEmail &&
+                            classData.child("teacherPassword").value == teacherPassword
+                }
+                if (validLogin) onSuccess() else onFailure("Invalid credentials.")
+            } else {
+                onFailure("Institute not found.")
+            }
+        }.addOnFailureListener {
+            onFailure("Failed to access Firebase Database.")
+        }
+    }
 
 
     Column (modifier = modifier){
@@ -69,10 +102,9 @@ fun Loginpage2(
                         verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(text = "Login",fontSize= 30.sp, color = Color.Black)
 
-                        TextField(value = "", onValueChange = {}, placeholder = { Text("Institute ID")})
-                        TextField(value = "", onValueChange = {}, placeholder = { Text("Username")})
-
-                        TextField(value = "", onValueChange = {}, placeholder = { Text("Password")})
+                        TextField(value = instituteId, onValueChange = { instituteId = it }, placeholder = { Text("Institute ID")})
+                        TextField(value = email, onValueChange = { email = it }, label = { Text("Username")})
+                        TextField(value = password, onValueChange = { password = it },visualTransformation = PasswordVisualTransformation(), placeholder = { Text("Password")})
 
                     }
 
@@ -87,12 +119,18 @@ fun Loginpage2(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ){
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = { checkLoginCredentials(instituteId, email, password,
+                        onSuccess = { loginStatus = "Login Successful" },
+                        onFailure = { error -> loginStatus = error }
+                    )
+                    }) {
                         Text(text = "Login",
                             color = Color.Black,
                             modifier = Modifier
                                 .padding(10.dp))
                     }
+                    Text(loginStatus)
+                }
                 }
 
             }
@@ -103,5 +141,4 @@ fun Loginpage2(
 
         }
     }
-}
 
