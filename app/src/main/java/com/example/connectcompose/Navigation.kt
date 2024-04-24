@@ -5,10 +5,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun Navigation(
-    onEvent: (ContactEvent) -> Unit, state: ContactState
+    onEvent: (ContactEvent) -> Unit, state: ContactState,auth : FirebaseAuth
 ) {
 
     val navController = rememberNavController()
@@ -35,7 +36,7 @@ fun Navigation(
             FinalList(onEvent = onEvent, state = state)
         }
         composable(route = Screen.LoginPage2.route){
-            Loginpage2(modifier = Modifier)
+            Loginpage2(modifier = Modifier,auth = auth)
         }
     }
 }

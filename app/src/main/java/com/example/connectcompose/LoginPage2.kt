@@ -1,6 +1,7 @@
 package com.example.connectcompose
 
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,18 +27,49 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+
+private fun signIn(email: String, password: String,auth: FirebaseAuth) {
+    // [START sign_in_with_email]
+
+    auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener() { task ->
+            if (task.isSuccessful) {
+                // Sign in success, update UI with the signed-in user's information
+                Log.d("working", "signInWithEmail:success")
+                val user = auth.currentUser
+
+
+
+            } else {
+                // If sign in fails, display a message to the user.
+                Log.w("working", "signInWithEmail:failure", task.exception)
+
+
+
+            }
+
+
+        }
+
+}
+
 
 
 @Composable
 fun Loginpage2(
-    modifier : Modifier
+    modifier : Modifier,
+    auth : FirebaseAuth
 ){
     var instituteId by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginStatus by remember { mutableStateOf("") }
+
+
+    /// older code used for login in remove if not needed
 
     fun checkLoginCredentials(
         instituteId: String,
@@ -63,6 +95,9 @@ fun Loginpage2(
             onFailure("Failed to access Firebase Database.")
         }
     }
+
+ ///// Older code used for login
+
 
 
     Column (modifier = modifier){
@@ -119,10 +154,10 @@ fun Loginpage2(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ){
-                    Button(onClick = { checkLoginCredentials(instituteId, email, password,
-                        onSuccess = { loginStatus = "Login Successful" },
-                        onFailure = { error -> loginStatus = error }
-                    )
+                    Button(onClick = {
+
+                    signIn(email,password,auth)
+
                     }) {
                         Text(text = "Login",
                             color = Color.Black,
