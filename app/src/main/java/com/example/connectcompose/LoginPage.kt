@@ -3,11 +3,14 @@ package com.example.connectcompose
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,25 +27,31 @@ import androidx.navigation.NavController
 
 @Composable
 fun LoginPage(
-    modifier: Modifier, navController: NavController
+    navController: NavController
 ) {
 
     Surface(Modifier.fillMaxSize()) {
         Column {
 
             Text(
-                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                modifier = Modifier.padding(32.dp, 32.dp, 32.dp, 0.dp),
                 text = "Connect - Be Present",
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 32.sp,
             )
 
+            Spacer(Modifier.weight(1f))
+
             Image(
-                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
-                painter = painterResource(id = R.drawable.educator),
+                modifier = Modifier
+                    .padding(32.dp, 32.dp, 32.dp, 0.dp)
+                    .clip(RoundedCornerShape(16.dp)),
+                painter = painterResource(id = R.drawable.graduation),
                 contentDescription = "The image is of institute"
             )
+
+            Spacer(Modifier.weight(1f))
 
             TextSection(navController = navController)
         }
@@ -55,19 +64,20 @@ fun TextSection(
 ) {
     Column(
         modifier = Modifier
+            .wrapContentSize()
             .padding(32.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceBright),
+            .background(MaterialTheme.colorScheme.onSurface),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(32.dp),
             text = "User Mode",
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.surface
         )
 
         Column(Modifier
@@ -84,7 +94,7 @@ fun TextSection(
             Text(
                 modifier = Modifier.padding(8.dp),
                 text = "Here the platform is use individually and the user would have the full control of the system",
-                color = MaterialTheme.colorScheme.onBackground,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp
             )
         }

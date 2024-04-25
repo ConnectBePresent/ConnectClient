@@ -15,7 +15,7 @@ fun Navigation(
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(route = Screen.Login.route) {
-            LoginPage(modifier = Modifier, navController = navController)
+            LoginPage(navController = navController)
         }
         composable(route = Screen.Welcome.route) {
             Welcome(modifier = Modifier, navController = navController)
