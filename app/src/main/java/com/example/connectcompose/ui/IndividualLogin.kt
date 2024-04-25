@@ -34,63 +34,65 @@ import kotlinx.coroutines.launch
 fun IndividualLogin(
     navController: NavController
 ) {
-    Surface(Modifier.fillMaxSize()) {
+    MaterialTheme {
+        Surface(Modifier.fillMaxSize()) {
 
-        var name by remember { mutableStateOf("Guest") }
+            var name by remember { mutableStateOf("Guest") }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp),
-        ) {
-            Text(
-                text = "Hi,\n\n\nWelcome to\n\n\nConnect!",
-                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
-                fontSize = 56.sp,
-                minLines = 9,
-                maxLines = 9,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-
-            Text(
-                text = "What should we call you?",
-                Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
-                fontSize = 22.sp,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            OutlinedTextField(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp, 16.dp, 16.dp, 0.dp),
-                shape = RoundedCornerShape(16.dp),
-                label = { Text("Name") },
-                value = name,
-                onValueChange = {
-                    name = it
-                },
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words)
-            )
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp),
+            ) {
+                Text(
+                    text = "Hi,\n\n\nWelcome to\n\n\nConnect!",
+                    modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                    fontSize = 56.sp,
+                    minLines = 9,
+                    maxLines = 9,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "What should we call you?",
+                    Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                    fontSize = 22.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
 
-            Button(modifier = Modifier
-                .padding(16.dp, 16.dp, 16.dp, 0.dp)
-                .align(Alignment.End),
-                onClick = {
-                    if (name.isNotEmpty()) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp, 16.dp, 16.dp, 0.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    label = { Text("Name") },
+                    value = name,
+                    onValueChange = {
+                        name = it
+                    },
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words)
+                )
 
-                        GlobalScope.launch {
-                            StoreData(context = navController.context).setUserName(name)
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(modifier = Modifier
+                    .padding(16.dp, 16.dp, 16.dp, 0.dp)
+                    .align(Alignment.End),
+                    onClick = {
+                        if (name.isNotEmpty()) {
+
+                            GlobalScope.launch {
+                                StoreData(context = navController.context).setUserName(name)
+                            }
+
+                            navController.navigate(route = Screen.StudentEntry.route)
+                        } else {
+                            name = "Guest"
                         }
-
-                        navController.navigate(route = Screen.StudentEntry.route)
-                    } else {
-                        name = "Guest"
-                    }
-                }) { Text("Next") }
+                    }) { Text("Next") }
+            }
         }
     }
 }

@@ -18,7 +18,8 @@ fun Navigation(
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.Login.route) {
         composable(route = Screen.Login.route) {
-            LoginPage(navController = navController)
+//            LoginPage(navController = navController) FIXME:
+            IndividualStudentListScreen(state = state, onEvent = onEvent, navController = navController)
         }
         composable(route = Screen.Welcome.route) {
             IndividualLogin(navController = navController)

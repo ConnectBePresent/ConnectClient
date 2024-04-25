@@ -37,30 +37,33 @@ fun LoginPage(
     navController: NavController
 ) {
 
-    Surface(Modifier.fillMaxSize()) {
-        Column {
+    MaterialTheme {
 
-            Text(
-                modifier = Modifier.padding(32.dp, 32.dp, 32.dp, 0.dp),
-                text = "Connect - Be Present",
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 32.sp,
-            )
+        Surface(Modifier.fillMaxSize()) {
+            Column {
 
-            Spacer(Modifier.weight(1f))
+                Text(
+                    modifier = Modifier.padding(32.dp, 32.dp, 32.dp, 0.dp),
+                    text = "Connect - Be Present",
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 32.sp,
+                )
 
-            Image(
-                modifier = Modifier
-                    .padding(32.dp, 32.dp, 32.dp, 0.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                painter = painterResource(id = R.drawable.graduation),
-                contentDescription = "The image is of institute"
-            )
+                Spacer(Modifier.weight(1f))
 
-            Spacer(Modifier.weight(1f))
+                Image(
+                    modifier = Modifier
+                        .padding(32.dp, 32.dp, 32.dp, 0.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    painter = painterResource(id = R.drawable.graduation),
+                    contentDescription = "The image is of institute"
+                )
 
-            TextSection(navController = navController)
+                Spacer(Modifier.weight(1f))
+
+                TextSection(navController = navController)
+            }
         }
     }
 }
