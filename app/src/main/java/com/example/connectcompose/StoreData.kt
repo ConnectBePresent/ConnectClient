@@ -20,6 +20,10 @@ class StoreData(private val context: Context) {
         preferences[USER_NAME] ?: ""
     }
 
+    val isUserNameStored: Flow<Boolean> = context.dataStore.data.map { preference ->
+        preference.contains(USER_NAME)
+    }
+
     suspend fun setUserName(token: String) {
         context.dataStore.edit { preferences ->
             preferences[USER_NAME] = token

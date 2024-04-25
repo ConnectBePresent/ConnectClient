@@ -15,6 +15,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -25,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.connectcompose.R
 import com.example.connectcompose.Screen
+import com.example.connectcompose.StoreData
 
 @Composable
 fun LoginPage(
@@ -63,6 +69,15 @@ fun LoginPage(
 fun TextSection(
     navController: NavController
 ) {
+
+    var isUserNameStored by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        StoreData(context = navController.context).isUserNameStored.collect {
+            isUserNameStored = it
+        }
+    }
+
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -81,12 +96,17 @@ fun TextSection(
             color = MaterialTheme.colorScheme.surface
         )
 
-        Column(Modifier
-            .padding(32.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .clickable { navController.navigate(Screen.Welcome.route) }
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)) {
+        Column(
+            Modifier
+                .padding(32.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable {
+
+                    if (isUserNameStored) navController.navigate(Screen.StudentEntry.route)
+                    else navController.navigate(Screen.Welcome.route)
+                }
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)) {
             Text(
                 text = "Individual",
                 color = MaterialTheme.colorScheme.onBackground,

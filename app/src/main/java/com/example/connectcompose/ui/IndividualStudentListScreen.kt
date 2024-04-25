@@ -49,59 +49,56 @@ import com.example.connectcompose.SortType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContactScreen(
-    state : ContactState,
-    onEvent: (ContactEvent) -> Unit,
-    navController : NavController
-){
-
-
-
+fun IndividualStudentListScreen(
+    state: ContactState, onEvent: (ContactEvent) -> Unit, navController: NavController
+) {
     Scaffold(
 
         topBar = {
-
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth(1f)
                     .padding(10.dp)
-            ){
-                Button(onClick = {
-                    if(state.isMenuOpen){
-                        onEvent(ContactEvent.HideMenu)
-                    }
-                    else {
-                        onEvent(ContactEvent.ShowMenu)
-                    }
-                },
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)) {
-                    Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu icon to access other screens" )
+            ) {
+                Button(
+                    onClick = {
+                        if (state.isMenuOpen) {
+                            onEvent(ContactEvent.HideMenu)
+                        } else {
+                            onEvent(ContactEvent.ShowMenu)
+                        }
+                    }, modifier = Modifier.padding(horizontal = 10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = "Menu icon to access other screens"
+                    )
 
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                Button(onClick = {
-                                 navController.navigate(Screen.FinalList.route)
-                },
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)) {
-                    Icon(imageVector = Icons.Default.Check, contentDescription = "Move to final list of absent students")
+                Button(
+                    onClick = {
+                        navController.navigate(Screen.FinalList.route)
+                    }, modifier = Modifier.padding(horizontal = 10.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Move to final list of absent students"
+                    )
 
                 }
             }
 
-        },
-        floatingActionButton = {
+        }, floatingActionButton = {
             FloatingActionButton(onClick = {
                 onEvent(ContactEvent.ShowDialog)
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add contact")
             }
 
-        }
-    ) { padding ->
-        if(state.isAddingContact){
+        }) { padding ->
+        if (state.isAddingContact) {
             DialogWithOutImage(state = state, onEvent = onEvent, modifier = Modifier)
         }
 
@@ -109,16 +106,8 @@ fun ContactScreen(
         ///new menu
 
 
-
-
-
-
-
-
         ///new menu
         /////menu
-
-
 
 
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -127,20 +116,14 @@ fun ContactScreen(
 
 
         if (state.isReportOpen) {
-            DatePickerDialog(onDismissRequest = {  },
-                confirmButton = {
-                    TextButton(onClick = { onEvent(ContactEvent.HideReport) }) {
-                        Text(text = "Save")
-                    }
-                }) {
+            DatePickerDialog(onDismissRequest = { }, confirmButton = {
+                TextButton(onClick = { onEvent(ContactEvent.HideReport) }) {
+                    Text(text = "Save")
+                }
+            }) {
                 DatePicker(state = dateState)
             }
         }
-
-
-
-
-
 
 
         /////menu
@@ -148,22 +131,21 @@ fun ContactScreen(
             contentPadding = padding,
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
-        ){
+        ) {
 
             item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                    , verticalAlignment = Alignment.CenterVertically){
-                    SortType.entries.forEach { sortType->
+                        .horizontalScroll(rememberScrollState()),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SortType.entries.forEach { sortType ->
                         Row(
-                            modifier = Modifier
-                                .clickable{
-                                    onEvent(ContactEvent.SortContacts(sortType))
-                                },
-                            verticalAlignment = Alignment.CenterVertically
-                        ){
+                            modifier = Modifier.clickable {
+                                onEvent(ContactEvent.SortContacts(sortType))
+                            }, verticalAlignment = Alignment.CenterVertically
+                        ) {
                             RadioButton(selected = state.sortType == sortType,
                                 onClick = { onEvent(ContactEvent.SortContacts(sortType)) })
                             Text(text = sortType.name)
@@ -172,80 +154,79 @@ fun ContactScreen(
                 }
 
             }
-            items(state.contacts){contact->
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)) {
-                    Column(modifier = Modifier
-                        .weight(1f)) {
-                        Text(contact.firstName,fontSize = 20.sp)
-                        Text(contact.phoneNumber,fontSize = 12.sp)
+            items(state.contacts) { contact ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(contact.firstName, fontSize = 20.sp)
+                        Text(contact.phoneNumber, fontSize = 12.sp)
                     }
                     IconButton(onClick = {
                         onEvent(ContactEvent.AbsentContact(contact))
-                        for(i in state.absent){
-                            Log.d("Absent",i.firstName)
+                        for (i in state.absent) {
+                            Log.d("Absent", i.firstName)
                         }
                         onEvent(ContactEvent.DeleteContact(contact))
                     }) {
-                        Icon(imageVector = Icons.Default.Delete
-                            ,contentDescription = "Delete Contact")
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete Contact"
+                        )
 
                     }
                 }
             }
 
 
-
         }
 
 
 
-        if(state.isMenuOpen){
+        if (state.isMenuOpen) {
 
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                drawerContent = {
-                    ModalDrawerSheet(
-                        Modifier
-                            .padding(10.dp)
-                            .width(250.dp)
+            ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+                ModalDrawerSheet(
+                    Modifier
+                        .padding(10.dp)
+                        .width(250.dp)
 
+                ) {
+                    Spacer(
+                        modifier = Modifier.weight(1f)
+                    )
+                    TextButton(
+                        onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()
                     ) {
-                        Spacer(modifier = Modifier
-                            .weight(1f))
-                        TextButton(onClick = { /*TODO*/ },modifier = Modifier
-                            .fillMaxWidth()) {
-                            Text(text = "Import CSV")
-
-                        }
-                        TextButton(onClick = {
-                            navController.navigate(Screen.ReportFrag.route)
-                        },modifier = Modifier
-                            .fillMaxWidth()) {
-                            Text(text = "Report")
-
-                        }
-                        TextButton(onClick = {
-                            navController.navigate(Screen.MessageFrag.route)
-                        },modifier = Modifier
-                            .fillMaxWidth()) {
-                            Text(text = "Message")
-
-                        }
-                        Spacer(modifier = Modifier
-                            .weight(1f))
+                        Text(text = "Import CSV")
 
                     }
+                    TextButton(
+                        onClick = {
+                            navController.navigate(Screen.ReportFrag.route)
+                        }, modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Report")
+
+                    }
+                    TextButton(
+                        onClick = {
+                            navController.navigate(Screen.MessageFrag.route)
+                        }, modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Message")
+
+                    }
+                    Spacer(
+                        modifier = Modifier.weight(1f)
+                    )
+
                 }
-            ) {
-
-            }
-
-
+            }) {}
         }
-
-
     }
-
 }

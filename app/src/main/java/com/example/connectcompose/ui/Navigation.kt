@@ -24,7 +24,7 @@ fun Navigation(
             IndividualLogin(navController = navController)
         }
         composable(route = Screen.StudentEntry.route) {
-            ContactScreen(state = state, onEvent = onEvent, navController = navController)
+            IndividualStudentListScreen(state = state, onEvent = onEvent, navController = navController)
         }
         composable(route = Screen.StudentReport.route) {
             StudentReport()
