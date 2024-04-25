@@ -1,4 +1,4 @@
-package com.example.connectcompose
+package com.example.connectcompose.ui
 
 
 import android.util.Log
@@ -42,6 +42,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.connectcompose.ContactEvent
+import com.example.connectcompose.ContactState
+import com.example.connectcompose.Screen
+import com.example.connectcompose.SortType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

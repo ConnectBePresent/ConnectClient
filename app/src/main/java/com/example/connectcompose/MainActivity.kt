@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
+import com.example.connectcompose.ui.Navigation
 import com.example.connectcompose.ui.theme.ConnectComposeTheme
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth

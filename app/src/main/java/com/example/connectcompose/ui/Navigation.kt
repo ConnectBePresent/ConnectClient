@@ -1,15 +1,18 @@
-package com.example.connectcompose
+package com.example.connectcompose.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.connectcompose.ContactEvent
+import com.example.connectcompose.ContactState
+import com.example.connectcompose.Screen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun Navigation(
-    onEvent: (ContactEvent) -> Unit, state: ContactState,auth : FirebaseAuth
+    onEvent: (ContactEvent) -> Unit, state: ContactState, auth : FirebaseAuth
 ) {
 
     val navController = rememberNavController()
@@ -18,7 +21,7 @@ fun Navigation(
             LoginPage(navController = navController)
         }
         composable(route = Screen.Welcome.route) {
-            Welcome(modifier = Modifier, navController = navController)
+            IndividualLogin(modifier = Modifier, navController = navController)
         }
         composable(route = Screen.StudentEntry.route) {
             ContactScreen(state = state, onEvent = onEvent, navController = navController)

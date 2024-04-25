@@ -1,4 +1,4 @@
-package com.example.connectcompose
+package com.example.connectcompose.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

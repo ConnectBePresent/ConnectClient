@@ -1,4 +1,4 @@
-package com.example.connectcompose
+package com.example.connectcompose.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.connectcompose.ContactEvent
+import com.example.connectcompose.ContactState
+import com.example.connectcompose.Screen
 
 @Composable
 fun MessageFrag(

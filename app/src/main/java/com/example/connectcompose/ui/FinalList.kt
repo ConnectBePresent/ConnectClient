@@ -1,4 +1,4 @@
-package com.example.connectcompose
+package com.example.connectcompose.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.connectcompose.ContactEvent
+import com.example.connectcompose.ContactState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
