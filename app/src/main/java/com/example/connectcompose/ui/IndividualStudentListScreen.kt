@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,13 +20,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,10 +38,14 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,7 +59,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -80,12 +88,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private lateinit var showAddStudentDialog: MutableState<Boolean>
+private lateinit var showConfirmationDialog: MutableState<Boolean>
 
 @Composable
 fun IndividualStudentListScreen(navController: NavController, viewModel: MainViewModel) {
 
     showAddStudentDialog = remember { mutableStateOf(false) }
-    
+    showConfirmationDialog = remember { mutableStateOf(false) }
+
     val individualNavController = rememberNavController()
 
     MaterialTheme {
@@ -100,105 +110,93 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                     Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
                 }
             }) { padding ->
-                ModalNavigationDrawer(
-                    drawerState = drawerState,
-                    drawerContent = {
-                        ModalDrawerSheet(
-                            modifier = if (drawerState.isOpen) Modifier
-                                .fillMaxSize()
-                                .padding(32.dp, 64.dp, 32.dp, 32.dp)
-                            else if (drawerState.isAnimationRunning)
-                                Modifier.padding(16.dp)
-                            else
-                                Modifier.padding(0.dp),
-                            drawerShape = RoundedCornerShape(16.dp)
-                        ) {
+                ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+                    ModalDrawerSheet(
+                        modifier = if (drawerState.isOpen) Modifier
+                            .fillMaxSize()
+                            .padding(32.dp, 64.dp, 32.dp, 32.dp)
+                        else if (drawerState.isAnimationRunning) Modifier.padding(16.dp)
+                        else Modifier.padding(0.dp), drawerShape = RoundedCornerShape(16.dp)
+                    ) {
 
-                            Row(Modifier.padding(16.dp)) {
-                                Text(
-                                    text = "Connect",
-                                    modifier = Modifier.align(Alignment.CenterVertically),
-                                    fontSize = 18.sp
+                        Row(Modifier.padding(16.dp)) {
+                            Text(
+                                text = "Connect",
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                fontSize = 18.sp
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            IconButton(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        StoreData(context = navController.context).setIndividualUserName(
+                                            ""
+                                        )
+                                    }
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                    contentDescription = "Logout"
                                 )
-
-                                Spacer(modifier = Modifier.weight(1f))
-
-                                IconButton(
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            StoreData(context = navController.context)
-                                                .setIndividualUserName(
-                                                    ""
-                                                )
-                                        }
-                                    },
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.ExitToApp,
-                                        contentDescription = "Logout"
-                                    )
-                                }
                             }
-
-                            NavigationDrawerItem(
-                                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
-                                label = { Text(text = "Student Report") },
-                                selected = false,
-                                onClick = {
-                                    coroutineScope.launch { drawerState.close() }
-                                    individualNavController.popBackStack(
-                                        Constants.SCREEN_INDIVIDUAL_LIST,
-                                        false
-                                    )
-                                    individualNavController.navigate(Constants.SCREEN_INDIVIDUAL_REPORT)
-                                }
-                            )
-
-                            NavigationDrawerItem(
-                                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
-                                label = { Text(text = "Custom Message") },
-                                selected = false,
-                                onClick = {
-                                    coroutineScope.launch { drawerState.close() }
-                                    individualNavController.popBackStack(
-                                        Constants.SCREEN_INDIVIDUAL_LIST,
-                                        false
-                                    )
-                                    individualNavController.navigate(Constants.SCREEN_INDIVIDUAL_MESSAGE)
-                                }
-                            )
                         }
-                    }) {
+
+                        NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                            label = { Text(text = "Student Report") },
+                            selected = false,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                individualNavController.popBackStack(
+                                    Constants.SCREEN_INDIVIDUAL_LIST, false
+                                )
+                                individualNavController.navigate(Constants.SCREEN_INDIVIDUAL_REPORT)
+                            })
+
+                        NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                            label = { Text(text = "Custom Message") },
+                            selected = false,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                individualNavController.popBackStack(
+                                    Constants.SCREEN_INDIVIDUAL_LIST, false
+                                )
+                                individualNavController.navigate(Constants.SCREEN_INDIVIDUAL_MESSAGE)
+                            })
+                    }
+                }) {
 
                     Column {
                         Row(
-                        modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .padding(16.dp)
-                    ) {
-                        IconButton(
-                            onClick = {
-                                coroutineScope.launch {
-                                    if (drawerState.isClosed) drawerState.open()
-                                    else drawerState.close()
-                                }
-                            },
+                            modifier = Modifier
+                                .fillMaxWidth(1f)
+                                .padding(16.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu icon to access other screens"
+                            IconButton(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        if (drawerState.isClosed) drawerState.open()
+                                        else drawerState.close()
+                                    }
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Menu icon to access other screens"
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                text = "Connect",
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                fontSize = 24.sp
                             )
-                        }
 
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Text(
-                            text = "Connect",
-                            modifier = Modifier.align(Alignment.CenterVertically),
-                            fontSize = 24.sp
-                        )
-
-                        Spacer(modifier = Modifier.weight(1f))
+                            Spacer(modifier = Modifier.weight(1f))
                         }
 
                         NavHost(
@@ -209,7 +207,7 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                             startDestination = Constants.SCREEN_INDIVIDUAL_LIST
                         ) {
                             composable(route = Constants.SCREEN_INDIVIDUAL_LIST) {
-                                StudentList(individualNavController, viewModel)
+                                StudentList(viewModel)
                             }
 
                             composable(route = Constants.SCREEN_INDIVIDUAL_REPORT) {
@@ -221,10 +219,105 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                         }
 
                         if (showAddStudentDialog.value) StudentAddDialog(viewModel)
+                        if (showConfirmationDialog.value) ConfirmationDialog(viewModel)
 
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ConfirmationDialog(viewModel: MainViewModel) {
+
+    val absenteeList = remember { mutableStateListOf<Student>() }
+
+    viewModel.getAbsenteeList()
+        .observe(LocalViewModelStoreOwner.current as LifecycleOwner) { list ->
+            absenteeList.clear()
+            absenteeList.addAll(list.toMutableStateList())
+        }
+
+    Dialog(
+        onDismissRequest = { showConfirmationDialog.value = false },
+        properties = DialogProperties(usePlatformDefaultWidth = true),
+    ) {
+        Card(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp)
+        ) {
+
+            Text(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.Start),
+                text = "Confirm Absentees",
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 24.sp,
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(absenteeList) { student ->
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                        border = CardDefaults.outlinedCardBorder(),
+                        modifier = Modifier
+                            .padding(all = 8.dp)
+                            .fillMaxSize(),
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(all = 8.dp)
+                        ) {
+                            Text(
+                                "${student.rollNumber} • ${student.name}",
+                                modifier = Modifier.padding(all = 8.dp),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            Text(
+                                text = "Ph: ${student.phoneNumber}",
+                                modifier = Modifier.padding(all = 8.dp),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                    }
+                }
+            }
+
+            TextButton(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .align(Alignment.End)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF292D32))
+                    .padding(4.dp),
+                onClick = {
+                    viewModel.clearAbsenteeList()
+                    showConfirmationDialog.value = false
+                },
+                content = {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(color = Color.White)) {
+                                append("Confirm")
+                            }
+                        }, fontSize = 12.sp, fontWeight = FontWeight.Light
+                    )
+                },
+                shape = RoundedCornerShape(32.dp)
+            )
         }
     }
 }
@@ -239,20 +332,24 @@ fun StudentReport(individualNavController: NavHostController) {
     Text("Student Report")
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudentList(individualNavController: NavHostController, viewModel: MainViewModel) {
+fun StudentList(viewModel: MainViewModel) {
     Column {
 
-        var studentList = remember { mutableStateListOf<Student>() }
+        val studentList = remember { mutableStateListOf<Student>() }
 
-        viewModel.getAllStudents()
-            .observe(LocalViewModelStoreOwner.current as LifecycleOwner) { list ->
-                list?.let {
-                    studentList = it.toMutableStateList()
+        val lifecycleOwner = LocalViewModelStoreOwner.current as LifecycleOwner
+
+        LaunchedEffect(viewModel.getAbsenteeList()) {
+            viewModel.getAllStudents()
+                .observe(lifecycleOwner) { list ->
+                    studentList.clear()
+                    studentList.addAll(list.toMutableStateList())
                 }
-            }
+        }
 
-        if (studentList.isEmpty()) {
+        if (studentList.isEmpty() && viewModel.isAbsenteeListEmpty()) {
             Spacer(modifier = Modifier.weight(1.0f))
 
             Icon(
@@ -268,8 +365,7 @@ fun StudentList(individualNavController: NavHostController, viewModel: MainViewM
             val pickPictureLauncher = rememberLauncherForActivityResult(
                 ActivityResultContracts.GetContent()
             ) { fileUri ->
-                if (fileUri == null)
-                    return@rememberLauncherForActivityResult
+                if (fileUri == null) return@rememberLauncherForActivityResult
 
                 viewModel.importData(fileUri) // FIXME: manual refresh
             }
@@ -279,8 +375,7 @@ fun StudentList(individualNavController: NavHostController, viewModel: MainViewM
                     .align(Alignment.CenterHorizontally)
                     .padding(16.dp),
                 border = BorderStroke(
-                    1.dp,
-                    MaterialTheme.colorScheme.onSurface
+                    1.dp, MaterialTheme.colorScheme.onSurface
                 ),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = Color(
@@ -305,42 +400,91 @@ fun StudentList(individualNavController: NavHostController, viewModel: MainViewM
             Spacer(modifier = Modifier.weight(1.0f))
 
             return
+        } else if (studentList.isEmpty()) {
+            showConfirmationDialog.value = true
         }
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(studentList) {
+            items(studentList) { student ->
 
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                    border = CardDefaults.outlinedCardBorder(),
-                    modifier = Modifier
-                        .padding(all = 8.dp)
-                        .fillMaxSize(),
-                    shape = RoundedCornerShape(16.dp),
-                ) {
+                val state = rememberSwipeToDismissBoxState(
+                    initialValue = SwipeToDismissBoxValue.Settled,
+                    confirmValueChange = {
+                        if (it == SwipeToDismissBoxValue.StartToEnd)
+                            viewModel.addAbsentee(student)
 
-                    Column(
-                        modifier = Modifier.padding(all = 8.dp)
-                    ) {
-                        Text(
-                            "${it.rollNumber} • ${it.name}",
-                            modifier = Modifier.padding(all = 8.dp),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
+                        studentList.remove(student)
 
-                        Text(
-                            text = "Ph: ${it.phoneNumber}",
-                            modifier = Modifier.padding(all = 8.dp),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
+                        true
                     }
-                }
+                )
+
+                SwipeToDismissBox(
+                    state = state,
+                    backgroundContent = @Composable {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(all = 8.dp)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(
+                                    if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd)
+                                        Color.Red
+                                    else
+                                        Color.Green
+                                ),
+                        ) {
+                            Icon(
+
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_person_off),
+                                contentDescription = "Absent",
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .padding(16.dp)
+                            )
+                            Icon(
+                                imageVector = ImageVector.vectorResource(R.drawable.ic_person_add),
+                                contentDescription = "Present",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(16.dp)
+                            )
+                        }
+                    },
+                    enableDismissFromStartToEnd = true,
+                    enableDismissFromEndToStart = true,
+                    content = @Composable {
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                            border = CardDefaults.outlinedCardBorder(),
+                            modifier = Modifier
+                                .padding(all = 8.dp)
+                                .fillMaxSize(),
+                            shape = RoundedCornerShape(16.dp),
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(all = 8.dp)
+                            ) {
+                                Text(
+                                    "${student.rollNumber} • ${student.name}",
+                                    modifier = Modifier.padding(all = 8.dp),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+
+                                Text(
+                                    text = "Ph: ${student.phoneNumber}",
+                                    modifier = Modifier.padding(all = 8.dp),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                        }
+                    })
             }
         }
     }

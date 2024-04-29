@@ -4,6 +4,7 @@ package com.example.connectcompose
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -20,7 +21,10 @@ class MainViewModel(
 ) :
     AndroidViewModel(application) {
 
-    private val studentsList: LiveData<List<Student>> = repository.getAll()
+    private val absenteeList: ArrayList<Student> = ArrayList()
+    private var absenteeListLiveData: LiveData<List<Student>> = MutableLiveData(absenteeList)
+
+    private val studentsListLiveData: LiveData<List<Student>> = repository.getAll()
 
     fun insert(student: Student) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(student)
@@ -35,7 +39,24 @@ class MainViewModel(
     }
 
     fun getAllStudents(): LiveData<List<Student>> {
-        return studentsList
+        return studentsListLiveData
+    }
+
+    fun addAbsentee(student: Student) {
+        absenteeList.add(student)
+    }
+
+    fun isAbsenteeListEmpty(): Boolean {
+        return absenteeList.isEmpty()
+    }
+
+    fun clearAbsenteeList() {
+        absenteeList.clear()
+        absenteeListLiveData = MutableLiveData(absenteeList)
+    }
+
+    fun getAbsenteeList(): LiveData<List<Student>> {
+        return absenteeListLiveData
     }
 
     fun importData(data: Uri) {

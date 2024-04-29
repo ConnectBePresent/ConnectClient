@@ -13,6 +13,7 @@ class StoreData(private val context: Context) {
 
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("dataStore")
+
         private val INDIVIDUAL_USER_NAME = stringPreferencesKey("individual_user_name")
     }
 
