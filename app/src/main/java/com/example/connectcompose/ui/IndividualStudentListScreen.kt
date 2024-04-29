@@ -86,12 +86,10 @@ import com.example.connectcompose.MessageUtils
 import com.example.connectcompose.R
 import com.example.connectcompose.StoreData
 import com.example.connectcompose.Student
+import com.example.connectcompose.Utils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 private lateinit var showAddStudentDialog: MutableState<Boolean>
 private lateinit var showConfirmationDialog: MutableState<Boolean>
@@ -314,12 +312,11 @@ fun ConfirmationDialog(viewModel: MainViewModel) {
                     MessageUtils.sendMessages(
                         viewModel.getApplication<Application>().applicationContext,
                         absenteeList
-                    )
+                    ) // TODO: runtime permission
 
                     viewModel.insert(
                         AttendanceEntry(
-                            SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
-                                .format(Calendar.getInstance().time),
+                            Utils.getDate(),
                             absenteeList
                         )
                     )
@@ -355,11 +352,80 @@ fun StudentReport(individualNavController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentList(viewModel: MainViewModel) {
+
+    val lifecycleOwner = LocalViewModelStoreOwner.current as LifecycleOwner
+
     Column {
 
-        val studentList = remember { mutableStateListOf<Student>() }
+        val today = Utils.getDate()
 
-        val lifecycleOwner = LocalViewModelStoreOwner.current as LifecycleOwner
+        var attendanceEntry: AttendanceEntry? = null
+
+        viewModel.getAttendanceEntry(today)
+            .observeForever {
+                attendanceEntry = it
+            }
+
+        if (attendanceEntry != null) {
+
+            Text(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.Start),
+                text = "Today's Absentees",
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 24.sp,
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(attendanceEntry!!.absenteeList) { student ->
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                        border = CardDefaults.outlinedCardBorder(),
+                        modifier = Modifier
+                            .padding(all = 8.dp)
+                            .fillMaxSize(),
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(all = 8.dp)
+                        ) {
+                            Text(
+                                "${student.rollNumber} • ${student.name}",
+                                modifier = Modifier.padding(all = 8.dp),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            Text(
+                                text = "Ph: ${student.phoneNumber}",
+                                modifier = Modifier.padding(all = 8.dp),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
+
+        Text(
+            modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.Start),
+            text = "Student List",
+            fontWeight = FontWeight.Black,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 24.sp,
+        )
+
+        val studentList = remember { mutableStateListOf<Student>() }
 
         LaunchedEffect(viewModel.getAbsenteeList()) {
             viewModel.getAllStudents()
@@ -432,11 +498,11 @@ fun StudentList(viewModel: MainViewModel) {
                 val state = rememberSwipeToDismissBoxState(
                     initialValue = SwipeToDismissBoxValue.Settled,
                     confirmValueChange = {
-                        if (it == SwipeToDismissBoxValue.StartToEnd)
+                        if (it == SwipeToDismissBoxValue.StartToEnd) {
                             viewModel.addAbsentee(student)
-
-                        studentList.remove(student)
-
+                            studentList.remove(student)
+                        } else if (it == SwipeToDismissBoxValue.EndToStart)
+                            studentList.remove(student)
                         true
                     }
                 )
@@ -473,8 +539,8 @@ fun StudentList(viewModel: MainViewModel) {
                             )
                         }
                     },
-                    enableDismissFromStartToEnd = true,
-                    enableDismissFromEndToStart = true,
+                    enableDismissFromStartToEnd = attendanceEntry == null,
+                    enableDismissFromEndToStart = attendanceEntry == null,
                     content = @Composable {
                         Card(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

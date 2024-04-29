@@ -74,13 +74,12 @@ class MainViewModel(
         repository.update(attendanceEntry)
     }
 
-    fun getAbsentees(date: String): AttendanceEntry? {
-        var attendanceEntry: AttendanceEntry? = null
+    private val attendanceEntry = MutableLiveData<AttendanceEntry?>()
 
-        viewModelScope.launch {
-            attendanceEntry = repository.getAbsentees(date)
+    fun getAttendanceEntry(date: String): MutableLiveData<AttendanceEntry?> {
+        viewModelScope.launch(Dispatchers.IO) {
+            attendanceEntry.postValue(repository.getAttendanceEntry(date))
         }
-
         return attendanceEntry
     }
 

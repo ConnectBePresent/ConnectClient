@@ -32,7 +32,7 @@ interface StudentDao {
     fun delete(attendanceEntry: AttendanceEntry)
 
     @Query("SELECT * FROM AttendanceEntry where date = :date")
-    fun getAbsentees(date: String): AttendanceEntry
+    fun getAttendanceEntry(date: String): AttendanceEntry?
 
     @Query("SELECT * FROM AttendanceEntry order by date desc")
     fun getAllAttendanceEntries(): LiveData<List<AttendanceEntry>>

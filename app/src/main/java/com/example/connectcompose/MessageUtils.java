@@ -4,6 +4,8 @@ import android.content.Context;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
+import com.google.firebase.BuildConfig;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -13,27 +15,36 @@ public class MessageUtils {
 
     public static void sendMessages(Context context, List<Student> absenteeList) {
 
+        if (BuildConfig.DEBUG)
+            return;
+
         Toast.makeText(context, "Sending messages...", Toast.LENGTH_SHORT).show();
 
-        for (Student student : absenteeList) {
+        try {
 
-            String text =
-                    "NOTICE: Your ward " +
-                            student.getName() +
-                            " is absent from school for the day " +
-                            new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
-                                    .format(Calendar.getInstance().getTime());
+            for (Student student : absenteeList) {
 
-            SmsManager.getDefault()
-                    .sendTextMessage(student.getPhoneNumber(),
-                            null,
-                            text,
-                            null,
-                            null
-                    );
+                String text =
+                        "NOTICE: Your ward " +
+                                student.getName() +
+                                " is absent from school for the day " +
+                                new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
+                                        .format(Calendar.getInstance().getTime());
+
+                SmsManager.getDefault()
+                        .sendTextMessage(student.getPhoneNumber(),
+                                null,
+                                text,
+                                null,
+                                null
+                        );
+            }
+
+            Toast.makeText(context, "Messages sent!", Toast.LENGTH_SHORT).show();
+        } catch (SecurityException e) {
+            Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
-
-        Toast.makeText(context, "Messages sent!", Toast.LENGTH_SHORT).show();
     }
 
 }

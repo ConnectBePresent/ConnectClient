@@ -44,8 +44,8 @@ class StudentRepository(private val studentDao: StudentDao) {
     }
 
     @WorkerThread
-    suspend fun getAbsentees(date : String): AttendanceEntry {
-        return studentDao.getAbsentees(date)
+    suspend fun getAttendanceEntry(date : String): AttendanceEntry? {
+        return studentDao.getAttendanceEntry(date)
     }
 
     fun getAllAttendanceEntries(): LiveData<List<AttendanceEntry>> {
