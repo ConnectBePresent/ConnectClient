@@ -3,6 +3,7 @@ package com.example.connectcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.connectcompose.application.Application
 import com.example.connectcompose.ui.IndividualLogin
 import com.example.connectcompose.ui.IndividualStudentListScreen
 import com.example.connectcompose.ui.InstituteLogin
@@ -20,6 +22,11 @@ import com.example.connectcompose.ui.Welcome
 import com.example.connectcompose.ui.theme.ConnectComposeTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModels {
+        MainViewModelFactory((application as Application).repository)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(route = Constants.SCREEN_INDIVIDUAL_STUDENT_LIST) {
-                        IndividualStudentListScreen(navController)
+                        IndividualStudentListScreen(navController, viewModel)
                     }
                 }
 
