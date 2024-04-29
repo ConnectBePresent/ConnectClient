@@ -24,7 +24,7 @@ import com.example.connectcompose.ui.theme.ConnectComposeTheme
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels {
-        MainViewModelFactory((application as Application).repository)
+        MainViewModelFactory((application as Application))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,8 +1,12 @@
 package com.example.connectcompose.ui
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
@@ -236,14 +241,13 @@ fun StudentReport(individualNavController: NavHostController) {
 
 @Composable
 fun StudentList(individualNavController: NavHostController, viewModel: MainViewModel) {
-
     Column {
 
         var studentList = remember { mutableStateListOf<Student>() }
 
         viewModel.getAllStudents()
-            .observe(LocalViewModelStoreOwner.current as LifecycleOwner) { words ->
-                words?.let {
+            .observe(LocalViewModelStoreOwner.current as LifecycleOwner) { list ->
+                list?.let {
                     studentList = it.toMutableStateList()
                 }
             }
@@ -260,54 +264,85 @@ fun StudentList(individualNavController: NavHostController, viewModel: MainViewM
                     .size(180.dp)
                     .padding(8.dp),
             )
-            Text(
-                text = "Nothing here!",
-                fontSize = 16.sp,
+
+            val pickPictureLauncher = rememberLauncherForActivityResult(
+                ActivityResultContracts.GetContent()
+            ) { fileUri ->
+                if (fileUri == null)
+                    return@rememberLauncherForActivityResult
+
+                viewModel.importData(fileUri) // FIXME: manual refresh
+            }
+
+            TextButton(
                 modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.CenterHorizontally),
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.weight(1.0f))
-        }
-
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(studentList) {
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                border = CardDefaults.outlinedCardBorder(),
-                modifier = Modifier
-                    .padding(all = 8.dp)
-                    .fillMaxSize(),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-
-                Column(
-                    modifier = Modifier.padding(all = 8.dp)
-                ) {
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+                border = BorderStroke(
+                    1.dp,
+                    MaterialTheme.colorScheme.onSurface
+                ),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = Color(
+                        0xFF292D32
+                    )
+                ),
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(12.dp),
+                onClick = {
+                    pickPictureLauncher.launch("text/*")
+                },
+                content = {
                     Text(
-                        "${it.rollNumber} • ${it.name}",
-                        modifier = Modifier.padding(all = 8.dp),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = "Import Class List from CSV File",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )
+                },
+            )
 
-                    Text(
-                        text = "Ph: ${it.phoneNumber}",
-                        modifier = Modifier.padding(all = 8.dp),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
+            Spacer(modifier = Modifier.weight(1.0f))
+
+            return
+        }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(studentList) {
+
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    border = CardDefaults.outlinedCardBorder(),
+                    modifier = Modifier
+                        .padding(all = 8.dp)
+                        .fillMaxSize(),
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+
+                    Column(
+                        modifier = Modifier.padding(all = 8.dp)
+                    ) {
+                        Text(
+                            "${it.rollNumber} • ${it.name}",
+                            modifier = Modifier.padding(all = 8.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Text(
+                            text = "Ph: ${it.phoneNumber}",
+                            modifier = Modifier.padding(all = 8.dp),
+                            color = MaterialTheme.colorScheme.onBackground,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
                 }
             }
         }
-    }
     }
 }
 
