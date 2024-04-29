@@ -25,15 +25,13 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.connectcompose.Screen
+import com.example.connectcompose.Constants
 import com.example.connectcompose.StoreData
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun IndividualLogin(
-    navController: NavController
-) {
+fun IndividualLogin(navController: NavController) {
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
 
@@ -84,10 +82,10 @@ fun IndividualLogin(
                         if (name.isNotEmpty()) {
 
                             GlobalScope.launch {
-                                StoreData(context = navController.context).setUserName(name)
+                                StoreData(context = navController.context).setIndividualUserName(name)
                             }
 
-                            navController.navigate(route = Screen.StudentEntry.route)
+                            navController.navigate(Constants.SCREEN_INDIVIDUAL_STUDENT_LIST)
                         } else {
                             name = "Guest"
                         }

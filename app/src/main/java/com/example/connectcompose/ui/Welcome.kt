@@ -15,11 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -28,14 +23,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.connectcompose.Constants
 import com.example.connectcompose.R
-import com.example.connectcompose.Screen
-import com.example.connectcompose.StoreData
 
 @Composable
-fun LoginPage(
-    navController: NavController
-) {
+fun Welcome(navController: NavController) {
 
     MaterialTheme {
 
@@ -69,17 +61,15 @@ fun LoginPage(
 }
 
 @Composable
-fun TextSection(
-    navController: NavController
-) {
+fun TextSection(navController: NavController) {
 
-    var isUserNameStored by remember { mutableStateOf(false) }
+    /*var isUserNameStored by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        StoreData(context = navController.context).isUserNameStored.collect {
+        StoreData(context = navController.context).isIndividualUserNameStored.collect {
             isUserNameStored = it
         }
-    }
+    }*/
 
     Column(
         modifier = Modifier
@@ -99,17 +89,15 @@ fun TextSection(
             color = MaterialTheme.colorScheme.surface
         )
 
-        Column(
-            Modifier
-                .padding(32.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-
-                    if (isUserNameStored) navController.navigate(Screen.StudentEntry.route)
-                    else navController.navigate(Screen.Welcome.route)
-                }
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)) {
+        Column(Modifier
+            .padding(32.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable {
+//                    if (isUserNameStored) navController.navigate(Constants.SCREEN_INDIVIDUAL_STUDENT_LIST) else
+                navController.navigate(Constants.SCREEN_INDIVIDUAL_LOGIN)
+            }
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp)) {
             Text(
                 text = "Individual",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -123,15 +111,14 @@ fun TextSection(
             )
         }
 
-        Column(
-            Modifier
-                .padding(32.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .clickable {
-                    navController.navigate(Screen.LoginPage2.route)
-                }
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp)) {
+        Column(Modifier
+            .padding(32.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable {
+                navController.navigate(Constants.SCREEN_INSTITUTE_LOGIN)
+            }
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp)) {
             Text(
                 text = "Institute", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp
             )

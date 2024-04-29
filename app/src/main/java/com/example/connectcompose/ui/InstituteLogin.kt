@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.connectcompose.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
@@ -60,10 +61,7 @@ private fun signIn(email: String, password: String,auth: FirebaseAuth) {
 
 
 @Composable
-fun Loginpage2(
-    modifier : Modifier,
-    auth : FirebaseAuth
-){
+fun InstituteLogin(navController: NavController) {
     var instituteId by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -101,7 +99,7 @@ fun Loginpage2(
 
 
 
-    Column (modifier = modifier){
+    /*Column (modifier = modifier){
         Row(modifier = modifier
             .fillMaxWidth(1f)
             .padding(10.dp)
@@ -175,6 +173,6 @@ fun Loginpage2(
 
 
 
-        }
+        }*/
     }
 

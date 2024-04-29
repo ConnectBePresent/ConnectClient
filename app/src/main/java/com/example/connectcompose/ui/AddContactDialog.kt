@@ -19,69 +19,67 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.connectcompose.ContactEvent
-import com.example.connectcompose.ContactState
 
 @Composable
 
 fun DialogWithOutImage(
-    onEvent: (ContactEvent) -> Unit,
-    state: ContactState,
+//    onEvent: (ContactEvent) -> Unit,
+//    state: ContactState,
     modifier : Modifier
 )
 {
-    Dialog(onDismissRequest = { onEvent(ContactEvent.HideDialog) }) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(1f)
-                .background(Color.Black)
-                .padding(10.dp),
-
-            shape = RoundedCornerShape(16.dp)
-
-        ){
-
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-
-            ) {
-
-                TextField(
-                    value = state.firstName,
-                    onValueChange = {
-                        onEvent(ContactEvent.SetFirstName(it))
-                    },
-                    placeholder = {
-                        Text(text = "first name")
-                    }
-                )
-                TextField(
-                    value = state.phoneNumber,
-                    onValueChange = {
-                        onEvent(ContactEvent.SetPhoneNumber(it))
-                    },
-                    placeholder = {
-                        Text(text = "Phone number")
-                    }
-                )
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    Button(onClick = {
-                        onEvent(ContactEvent.SaveContact)
-                    }) {
-                        Text(text = "Save")
-                    }
-                }
-            }
-
-
-        }
-    }
+//    Dialog(onDismissRequest = { onEvent(ContactEvent.HideDialog) }) {
+//        Card(
+//            modifier = Modifier
+//                .fillMaxWidth(1f)
+//                .background(Color.Black)
+//                .padding(10.dp),
+//
+//            shape = RoundedCornerShape(16.dp)
+//
+//        ){
+//
+//
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(10.dp),
+//
+//                verticalArrangement = Arrangement.spacedBy(10.dp)
+//
+//            ) {
+//
+//                TextField(
+//                    value = state.firstName,
+//                    onValueChange = {
+//                        onEvent(ContactEvent.SetFirstName(it))
+//                    },
+//                    placeholder = {
+//                        Text(text = "first name")
+//                    }
+//                )
+//                TextField(
+//                    value = state.phoneNumber,
+//                    onValueChange = {
+//                        onEvent(ContactEvent.SetPhoneNumber(it))
+//                    },
+//                    placeholder = {
+//                        Text(text = "Phone number")
+//                    }
+//                )
+//                Box(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    contentAlignment = Alignment.CenterEnd
+//                ) {
+//                    Button(onClick = {
+//                        onEvent(ContactEvent.SaveContact)
+//                    }) {
+//                        Text(text = "Save")
+//                    }
+//                }
+//            }
+//
+//
+//        }
+//    }
 }

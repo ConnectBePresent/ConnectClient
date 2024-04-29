@@ -12,21 +12,21 @@ import kotlinx.coroutines.flow.map
 class StoreData(private val context: Context) {
 
     companion object {
-        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("userName")
-        private val USER_NAME = stringPreferencesKey("user_name")
+        private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("dataStore")
+        private val INDIVIDUAL_USER_NAME = stringPreferencesKey("individual_user_name")
     }
 
-    val getUserName: Flow<String> = context.dataStore.data.map { preferences ->
-        preferences[USER_NAME] ?: ""
+    val getIndividualUserName: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[INDIVIDUAL_USER_NAME] ?: ""
     }
 
-    val isUserNameStored: Flow<Boolean> = context.dataStore.data.map { preference ->
-        preference.contains(USER_NAME)
+    val isIndividualUserNameStored: Flow<Boolean> = context.dataStore.data.map { preference ->
+        preference.contains(INDIVIDUAL_USER_NAME)
     }
 
-    suspend fun setUserName(token: String) {
+    suspend fun setIndividualUserName(token: String) {
         context.dataStore.edit { preferences ->
-            preferences[USER_NAME] = token
+            preferences[INDIVIDUAL_USER_NAME] = token
         }
     }
 }
