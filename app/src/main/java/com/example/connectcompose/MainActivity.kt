@@ -36,8 +36,8 @@ class MainActivity : ComponentActivity() {
                 var startDestination by remember { mutableStateOf(Constants.SCREEN_WELCOME) }
 
                 LaunchedEffect(Unit) {
-                    StoreData(context = this@MainActivity).isIndividualUserNameStored.collect {
-                        if (it)
+                    StoreData(context = this@MainActivity).getIndividualUserName.collect {
+                        if (it.isNotEmpty())
                             startDestination = Constants.SCREEN_INDIVIDUAL_STUDENT_LIST
                     }
                 }

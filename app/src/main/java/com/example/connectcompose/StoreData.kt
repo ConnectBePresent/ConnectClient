@@ -21,10 +21,6 @@ class StoreData(private val context: Context) {
         preferences[INDIVIDUAL_USER_NAME] ?: ""
     }
 
-    val isIndividualUserNameStored: Flow<Boolean> = context.dataStore.data.map { preference ->
-        preference.contains(INDIVIDUAL_USER_NAME)
-    }
-
     suspend fun setIndividualUserName(token: String) {
         context.dataStore.edit { preferences ->
             preferences[INDIVIDUAL_USER_NAME] = token

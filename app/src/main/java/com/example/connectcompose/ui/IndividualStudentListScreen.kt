@@ -123,21 +123,35 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                         else Modifier.padding(0.dp), drawerShape = RoundedCornerShape(16.dp)
                     ) {
 
+                        var title by remember { mutableStateOf("Connect") }
+
+                        LaunchedEffect(Unit) {
+                            StoreData(navController.context).getIndividualUserName
+                                .collect {
+                                    title = "Hi $it"
+                                }
+                        }
+
                         Row(Modifier.padding(16.dp)) {
                             Text(
-                                text = "Connect",
-                                modifier = Modifier.align(Alignment.CenterVertically),
-                                fontSize = 18.sp
+                                text = title,
+                                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp).align(Alignment.CenterVertically),
+                                fontSize = 24.sp
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
 
                             IconButton(
+                                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp).align(Alignment.CenterVertically),
                                 onClick = {
                                     coroutineScope.launch {
                                         StoreData(context = navController.context).setIndividualUserName(
                                             ""
                                         )
+                                        navController.popBackStack(
+                                            Constants.SCREEN_WELCOME, false
+                                        )
+                                        navController.navigate(Constants.SCREEN_WELCOME)
                                     }
                                 },
                             ) {
@@ -201,6 +215,25 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
+
+                            IconButton(
+                                onClick = {
+                                    coroutineScope.launch {
+                                        StoreData(context = navController.context).setIndividualUserName(
+                                            ""
+                                        )
+                                        navController.popBackStack(
+                                            Constants.SCREEN_WELCOME, false
+                                        )
+                                        navController.navigate(Constants.SCREEN_WELCOME)
+                                    }
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                    contentDescription = "Logout"
+                                )
+                            }
                         }
 
                         NavHost(
