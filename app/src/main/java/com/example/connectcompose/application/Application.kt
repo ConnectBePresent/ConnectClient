@@ -5,6 +5,10 @@ import com.example.connectcompose.StudentDatabase
 import com.example.connectcompose.StudentRepository
 
 class Application : Application() {
-    private val database by lazy { StudentDatabase.getDatabase(this) }
-    val repository by lazy { StudentRepository(database.studentDao()) }
+    private val studentDatabase by lazy {
+        StudentDatabase.getDatabase(
+            this, "student_database"
+        )
+    }
+    val repository by lazy { StudentRepository(studentDatabase.studentDao()) }
 }

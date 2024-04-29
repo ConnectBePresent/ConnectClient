@@ -1,5 +1,6 @@
 package com.example.connectcompose.ui
 
+import android.app.Application
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -78,14 +79,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.connectcompose.AttendanceEntry
 import com.example.connectcompose.Constants
 import com.example.connectcompose.MainViewModel
+import com.example.connectcompose.MessageUtils
 import com.example.connectcompose.R
 import com.example.connectcompose.StoreData
 import com.example.connectcompose.Student
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 private lateinit var showAddStudentDialog: MutableState<Boolean>
 private lateinit var showConfirmationDialog: MutableState<Boolean>
@@ -304,6 +310,20 @@ fun ConfirmationDialog(viewModel: MainViewModel) {
                     .background(Color(0xFF292D32))
                     .padding(4.dp),
                 onClick = {
+
+                    MessageUtils.sendMessages(
+                        viewModel.getApplication<Application>().applicationContext,
+                        absenteeList
+                    )
+
+                    viewModel.insert(
+                        AttendanceEntry(
+                            SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
+                                .format(Calendar.getInstance().time),
+                            absenteeList
+                        )
+                    )
+
                     viewModel.clearAbsenteeList()
                     showConfirmationDialog.value = false
                 },

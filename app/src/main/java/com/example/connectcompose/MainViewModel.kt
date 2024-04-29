@@ -24,7 +24,7 @@ class MainViewModel(
     private val absenteeList: ArrayList<Student> = ArrayList()
     private var absenteeListLiveData: LiveData<List<Student>> = MutableLiveData(absenteeList)
 
-    private val studentsListLiveData: LiveData<List<Student>> = repository.getAll()
+    private val studentsListLiveData: LiveData<List<Student>> = repository.getAllStudents()
 
     fun insert(student: Student) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(student)
@@ -58,6 +58,36 @@ class MainViewModel(
     fun getAbsenteeList(): LiveData<List<Student>> {
         return absenteeListLiveData
     }
+
+    private val attendanceListLiveData: LiveData<List<AttendanceEntry>> =
+        repository.getAllAttendanceEntries()
+
+    fun insert(attendanceEntry: AttendanceEntry) = viewModelScope.launch(Dispatchers.IO) {
+        repository.insert(attendanceEntry)
+    }
+
+    fun delete(attendanceEntry: AttendanceEntry) = viewModelScope.launch(Dispatchers.IO) {
+        repository.delete(attendanceEntry)
+    }
+
+    fun update(attendanceEntry: AttendanceEntry) = viewModelScope.launch(Dispatchers.IO) {
+        repository.update(attendanceEntry)
+    }
+
+    fun getAbsentees(date: String): AttendanceEntry? {
+        var attendanceEntry: AttendanceEntry? = null
+
+        viewModelScope.launch {
+            attendanceEntry = repository.getAbsentees(date)
+        }
+
+        return attendanceEntry
+    }
+
+    fun getAllAttendanceEntries(): LiveData<List<AttendanceEntry>> {
+        return attendanceListLiveData
+    }
+
 
     fun importData(data: Uri) {
         try {

@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 
 @Dao
 interface StudentDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(student: Student)
 
     @Update
@@ -20,4 +21,19 @@ interface StudentDao {
 
     @Query("SELECT * FROM Student order by rollNumber asc")
     fun getAll(): LiveData<List<Student>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(attendanceEntry: AttendanceEntry)
+
+    @Update
+    fun update(attendanceEntry: AttendanceEntry)
+
+    @Delete
+    fun delete(attendanceEntry: AttendanceEntry)
+
+    @Query("SELECT * FROM AttendanceEntry where date = :date")
+    fun getAbsentees(date: String): AttendanceEntry
+
+    @Query("SELECT * FROM AttendanceEntry order by date desc")
+    fun getAllAttendanceEntries(): LiveData<List<AttendanceEntry>>
 }

@@ -22,7 +22,33 @@ class StudentRepository(private val studentDao: StudentDao) {
         studentDao.update(student)
     }
 
-    fun getAll(): LiveData<List<Student>> {
+    fun getAllStudents(): LiveData<List<Student>> {
         return studentList
+    }
+
+    private val attendanceList: LiveData<List<AttendanceEntry>> = studentDao.getAllAttendanceEntries()
+
+    @WorkerThread
+    suspend fun insert(attendanceEntry: AttendanceEntry) {
+        studentDao.insert(attendanceEntry)
+    }
+
+    @WorkerThread
+    suspend fun delete(attendanceEntry: AttendanceEntry) {
+        studentDao.delete(attendanceEntry)
+    }
+
+    @WorkerThread
+    suspend fun update(attendanceEntry: AttendanceEntry) {
+        studentDao.update(attendanceEntry)
+    }
+
+    @WorkerThread
+    suspend fun getAbsentees(date : String): AttendanceEntry {
+        return studentDao.getAbsentees(date)
+    }
+
+    fun getAllAttendanceEntries(): LiveData<List<AttendanceEntry>> {
+        return attendanceList
     }
 }
