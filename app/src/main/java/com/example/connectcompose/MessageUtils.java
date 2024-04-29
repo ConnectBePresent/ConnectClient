@@ -4,8 +4,6 @@ import android.content.Context;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
-import com.google.firebase.BuildConfig;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -14,9 +12,6 @@ import java.util.Locale;
 public class MessageUtils {
 
     public static void sendMessages(Context context, List<Student> absenteeList) {
-
-        if (BuildConfig.DEBUG)
-            return;
 
         Toast.makeText(context, "Sending messages...", Toast.LENGTH_SHORT).show();
 

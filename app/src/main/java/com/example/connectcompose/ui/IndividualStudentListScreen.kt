@@ -1,6 +1,5 @@
 package com.example.connectcompose.ui
 
-import android.app.Application
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -87,6 +86,7 @@ import com.example.connectcompose.R
 import com.example.connectcompose.StoreData
 import com.example.connectcompose.Student
 import com.example.connectcompose.Utils
+import com.example.connectcompose.application.Application
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -488,12 +488,13 @@ fun StudentList(viewModel: MainViewModel) {
             return
         } else if (studentList.isEmpty()) {
             showConfirmationDialog.value = true
+//            return // FIXME: check this
         }
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(studentList) { student ->
+            items(studentList, key = { it.rollNumber }) { student ->
 
                 val state = rememberSwipeToDismissBoxState(
                     initialValue = SwipeToDismissBoxValue.Settled,
@@ -516,10 +517,8 @@ fun StudentList(viewModel: MainViewModel) {
                                 .padding(all = 8.dp)
                                 .clip(RoundedCornerShape(18.dp))
                                 .background(
-                                    if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd)
-                                        Color.Red
-                                    else
-                                        Color.Green
+                                    if (state.dismissDirection == SwipeToDismissBoxValue.StartToEnd) Color.Red
+                                    else Color.Green
                                 ),
                         ) {
                             Icon(
