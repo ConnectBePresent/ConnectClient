@@ -134,14 +134,18 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                         Row(Modifier.padding(16.dp)) {
                             Text(
                                 text = title,
-                                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp).align(Alignment.CenterVertically),
+                                modifier = Modifier
+                                    .padding(16.dp, 16.dp, 16.dp, 0.dp)
+                                    .align(Alignment.CenterVertically),
                                 fontSize = 24.sp
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
 
                             IconButton(
-                                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp).align(Alignment.CenterVertically),
+                                modifier = Modifier
+                                    .padding(16.dp, 16.dp, 16.dp, 0.dp)
+                                    .align(Alignment.CenterVertically),
                                 onClick = {
                                     coroutineScope.launch {
                                         StoreData(context = navController.context).setIndividualUserName(
@@ -653,7 +657,7 @@ fun StudentAddDialog(viewModel: MainViewModel) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 leadingIcon = @Composable {
                     Icon(
-                        painterResource(id = R.drawable.person), "person icon"
+                        painterResource(id = R.drawable.ic_person), "person icon"
                     )
                 })
 
@@ -670,7 +674,7 @@ fun StudentAddDialog(viewModel: MainViewModel) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 leadingIcon = @Composable {
                     Icon(
-                        painterResource(id = R.drawable.name), "name icon"
+                        painterResource(id = R.drawable.ic_badge), "name icon"
                     )
                 })
 
@@ -687,7 +691,7 @@ fun StudentAddDialog(viewModel: MainViewModel) {
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 leadingIcon = @Composable {
                     Icon(
-                        painterResource(id = R.drawable.phone), "phone icon"
+                        painterResource(id = R.drawable.ic_phone), "phone icon"
                     )
                 })
 
