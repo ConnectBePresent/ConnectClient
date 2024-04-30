@@ -330,7 +330,7 @@ fun ConfirmationDialog(viewModel: MainViewModel) {
                             )
 
                             Text(
-                                text = "Ph: ${student.phoneNumber}",
+                                text = "Ph: ${student.parentPhoneNumber}",
                                 modifier = Modifier.padding(all = 8.dp),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.bodySmall,
@@ -443,7 +443,7 @@ fun StudentList(viewModel: MainViewModel) {
                             )
 
                             Text(
-                                text = "Ph: ${student.phoneNumber}",
+                                text = "Ph: ${student.parentPhoneNumber}",
                                 modifier = Modifier.padding(all = 8.dp),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.bodySmall,
@@ -602,7 +602,7 @@ fun StudentList(viewModel: MainViewModel) {
                                 )
 
                                 Text(
-                                    text = "Ph: ${student.phoneNumber}",
+                                    text = "Ph: ${student.parentPhoneNumber}",
                                     modifier = Modifier.padding(all = 8.dp),
                                     color = MaterialTheme.colorScheme.onBackground,
                                     style = MaterialTheme.typography.bodySmall,

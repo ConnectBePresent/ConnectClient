@@ -38,15 +38,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.connectcompose.Constants
+import com.example.connectcompose.MainViewModel
 import com.example.connectcompose.R
 import com.example.connectcompose.SharedPreferenceHelper
+import com.example.connectcompose.Student
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun InstituteLogin(navController: NavController, firebaseAuth: FirebaseAuth) {
+fun InstituteLogin(
+    navController: NavController,
+    viewModel: MainViewModel,
+    firebaseAuth: FirebaseAuth,
+    firebaseDatabase: FirebaseDatabase
+) {
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
 
@@ -68,6 +79,7 @@ fun InstituteLogin(navController: NavController, firebaseAuth: FirebaseAuth) {
 
                 var email by remember { mutableStateOf("") }
                 var password by remember { mutableStateOf("") }
+
                 var passwordVisibility: Boolean by remember { mutableStateOf(false) }
 
                 OutlinedTextField(modifier = Modifier
@@ -148,13 +160,16 @@ fun InstituteLogin(navController: NavController, firebaseAuth: FirebaseAuth) {
 
                                         Toast.makeText(
                                             navController.context,
-                                            "Yayy!",
+                                            "Fetching Data...",
                                             Toast.LENGTH_SHORT,
                                         ).show()
 
                                         SharedPreferenceHelper.set(
                                             navController.context, Constants.INSTITUTE_EMAIL, email
                                         )
+
+                                        populate(navController, viewModel, email, firebaseDatabase)
+
                                     } else {
                                         buttonText = "Something went wrong"
                                     }
@@ -175,5 +190,55 @@ fun InstituteLogin(navController: NavController, firebaseAuth: FirebaseAuth) {
             }
         }
     }
+}
+
+fun populate(
+    navController: NavController,
+    viewModel: MainViewModel,
+    email: String,
+    firebaseDatabase: FirebaseDatabase
+) {
+    val instituteID = email.split("@")[1].split(".")[0].lowercase()
+
+    firebaseDatabase.getReference("institutions").child(instituteID).child("classList")
+        .addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                if (dataSnapshot.value == null) return
+
+                dataSnapshot.children.forEach {
+
+                    if (it.child("teacherEmail").value == email) {
+
+                        it.child("studentList").children.forEach { new ->
+                            viewModel.insert(
+                                Student(
+                                    new.child("rollNumber").value.toString().toInt(),
+                                    new.child("name").value.toString(),
+                                    new.child("parentPhoneNumber").value.toString()
+                                )
+                            )
+                        }
+
+                        Toast.makeText(
+                            navController.context,
+                            "Fetching successful, redirecting...",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(
+                    navController.context,
+                    "Something went wrong!",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+
+        })
+
 }
 

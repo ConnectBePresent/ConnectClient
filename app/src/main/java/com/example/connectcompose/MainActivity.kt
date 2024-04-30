@@ -1,7 +1,6 @@
 package com.example.connectcompose
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -23,11 +22,14 @@ import com.example.connectcompose.ui.Welcome
 import com.example.connectcompose.ui.theme.ConnectComposeTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firebaseDatabase: FirebaseDatabase
 
     private val viewModel: MainViewModel by viewModels {
         MainViewModelFactory((application as Application))
@@ -37,6 +39,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         firebaseAuth = Firebase.auth
+        firebaseDatabase = Firebase.database
 
         setContent {
             ConnectComposeTheme {
@@ -57,8 +60,6 @@ class MainActivity : ComponentActivity() {
                         this@MainActivity,
                         Constants.INSTITUTE_EMAIL
                     )
-
-                    Log.e("vishnu", "hi: $classEmail")
                 }
 
                 val navController = rememberNavController()
@@ -76,7 +77,7 @@ class MainActivity : ComponentActivity() {
                         IndividualLogin(navController)
                     }
                     composable(route = Constants.SCREEN_INSTITUTE_LOGIN) {
-                        InstituteLogin(navController, firebaseAuth)
+                        InstituteLogin(navController, viewModel, firebaseAuth, firebaseDatabase)
                     }
 
                     composable(route = Constants.SCREEN_INDIVIDUAL_STUDENT_LIST) {

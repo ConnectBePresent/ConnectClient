@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class Student(
     @PrimaryKey val rollNumber: Int,
     val name: String,
-    val phoneNumber : String,
+    val parentPhoneNumber: String,
 )
