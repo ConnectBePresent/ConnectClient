@@ -1,4 +1,4 @@
-package com.example.connectcompose
+package com.example.connectcompose.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -7,6 +7,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.example.connectcompose.AttendanceEntry
+import com.example.connectcompose.Student
 
 @Dao
 interface StudentDao {

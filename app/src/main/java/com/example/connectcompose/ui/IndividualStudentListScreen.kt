@@ -81,7 +81,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.connectcompose.AttendanceEntry
 import com.example.connectcompose.Constants
 import com.example.connectcompose.MainViewModel
-import com.example.connectcompose.MessageUtils
 import com.example.connectcompose.R
 import com.example.connectcompose.StoreData
 import com.example.connectcompose.Student
@@ -342,7 +341,7 @@ fun ConfirmationDialog(viewModel: MainViewModel) {
                     .padding(4.dp),
                 onClick = {
 
-                    MessageUtils.sendMessages(
+                    Utils.sendMessages(
                         viewModel.getApplication<Application>().applicationContext,
                         absenteeList
                     ) // TODO: runtime permission

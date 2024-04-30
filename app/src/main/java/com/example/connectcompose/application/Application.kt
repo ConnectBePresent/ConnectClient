@@ -1,8 +1,8 @@
 package com.example.connectcompose.application
 
 import android.app.Application
-import com.example.connectcompose.StudentDatabase
-import com.example.connectcompose.StudentRepository
+import com.example.connectcompose.db.StudentDatabase
+import com.example.connectcompose.db.StudentRepository
 
 class Application : Application() {
     private val studentDatabase by lazy {

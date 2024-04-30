@@ -1,7 +1,9 @@
-package com.example.connectcompose
+package com.example.connectcompose.db
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
+import com.example.connectcompose.AttendanceEntry
+import com.example.connectcompose.Student
 
 class StudentRepository(private val studentDao: StudentDao) {
 
