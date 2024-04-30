@@ -12,13 +12,12 @@ class Utils {
     companion object {
         fun getDate(): String {
             return SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            .format(Calendar.getInstance().time)
+                .format(Calendar.getInstance().time)
         }
 
         fun sendMessages(context: Context?, absenteeList: List<Student>) {
 
-//            if (BuildConfig.DEBUG)
-//                return
+            if (BuildConfig.DEBUG) return
 
             Toast.makeText(context, "Sending messages...", Toast.LENGTH_SHORT).show()
 

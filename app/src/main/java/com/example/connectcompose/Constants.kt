@@ -11,6 +11,10 @@ class Constants {
         const val SCREEN_INDIVIDUAL_HISTORY = "individual_history"
         const val SCREEN_INDIVIDUAL_MESSAGE = "individual_message"
 
+        const val ATTENDANCE_NOT_WAGED = -1
+        const val ATTENDANCE_WAGING = 0
+        const val ATTENDANCE_WAGED = 1
+
         const val SHARED_PREF_NAME = "com.example.connectcompose.shared_preferences"
         const val INDIVIDUAL_USER_NAME = "individual_user_name"
         const val INSTITUTE_EMAIL = "institute_email"

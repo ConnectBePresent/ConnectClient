@@ -99,6 +99,8 @@ import kotlinx.coroutines.launch
 private lateinit var showAddStudentDialog: MutableState<Boolean>
 private lateinit var showConfirmationDialog: MutableState<Boolean>
 
+private lateinit var attendanceStatus: MutableState<Int>
+
 @Composable
 fun StudentDetails(
     navController: NavController, viewModel: MainViewModel, firebaseDatabase: FirebaseDatabase
@@ -110,6 +112,7 @@ fun StudentDetails(
 
     showAddStudentDialog = remember { mutableStateOf(false) }
     showConfirmationDialog = remember { mutableStateOf(false) }
+    attendanceStatus = remember { mutableIntStateOf(Constants.ATTENDANCE_NOT_WAGED) }
 
     val individualNavController = rememberNavController()
 
@@ -144,7 +147,7 @@ fun StudentDetails(
 
                         Row(Modifier.padding(16.dp)) {
                             Text(
-                                text = title,
+                                text = "Hi $title",
                                 modifier = Modifier
                                     .padding(16.dp, 16.dp, 16.dp, 0.dp)
                                     .align(Alignment.CenterVertically),
@@ -373,13 +376,11 @@ fun ConfirmationDialog(
                 onClick = {
 
                     if (ContextCompat.checkSelfPermission(
-                            navController.context,
-                            Manifest.permission.SEND_SMS
+                            navController.context, Manifest.permission.SEND_SMS
                         ) == PackageManager.PERMISSION_GRANTED
                     ) {
                         Utils.sendMessages(
-                            viewModel.getApplication<Application>().applicationContext,
-                            absenteeList
+                            viewModel.getApplication<Application>().applicationContext, absenteeList
                         )
                     } else {
                         launcher.launch(Manifest.permission.SEND_SMS)
@@ -394,12 +395,12 @@ fun ConfirmationDialog(
                     )
 
                     if (mode == Constants.INSTITUTE_MODE) pushAttendanceDetails(
-                        navController,
-                        attendanceEntry,
-                        firebaseDatabase
+                        navController, attendanceEntry, firebaseDatabase
                     )
 
                     viewModel.clearAbsenteeList()
+                    attendanceStatus.value = Constants.ATTENDANCE_WAGED
+
                     showConfirmationDialog.value = false
                 },
                 content = {
@@ -457,20 +458,19 @@ fun AttendanceHistory(individualNavController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentList(viewModel: MainViewModel) {
-
-    val lifecycleOwner = LocalViewModelStoreOwner.current as LifecycleOwner
-
     Column {
 
         val today = Utils.getDate()
 
-        var attendanceEntry: AttendanceEntry? = null
+        var attendanceEntry = remember { mutableStateOf<AttendanceEntry?>(null) }
 
-        viewModel.getAttendanceEntry(today).observeForever {
-            attendanceEntry = it
+        LaunchedEffect(attendanceStatus.value) {
+            viewModel.getAttendanceEntry(today).observeForever {
+                attendanceEntry.value = it
+            }
         }
 
-        if (attendanceEntry != null) {
+        if (attendanceEntry.value != null) {
 
             Text(
                 modifier = Modifier
@@ -485,7 +485,9 @@ fun StudentList(viewModel: MainViewModel) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(attendanceEntry!!.absenteeList) { student ->
+                items(
+                    attendanceEntry.value!!.absenteeList.sortedBy { it.rollNumber },
+                    key = { it.rollNumber }) { student ->
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -531,14 +533,14 @@ fun StudentList(viewModel: MainViewModel) {
 
         val studentList = remember { mutableStateListOf<Student>() }
 
-        LaunchedEffect(viewModel.getAbsenteeList()) {
-            viewModel.getAllStudents().observe(lifecycleOwner) { list ->
+        LaunchedEffect(attendanceStatus.value) {
+            viewModel.getAllStudents().observeForever { list ->
                 studentList.clear()
                 studentList.addAll(list.toMutableStateList())
             }
         }
 
-        if (studentList.isEmpty() && viewModel.isAbsenteeListEmpty()) {
+        if (studentList.isEmpty() && attendanceStatus.value == Constants.ATTENDANCE_NOT_WAGED) {
             Spacer(modifier = Modifier.weight(1.0f))
 
             Icon(
@@ -589,27 +591,29 @@ fun StudentList(viewModel: MainViewModel) {
             Spacer(modifier = Modifier.weight(1.0f))
 
             return
-        } else if (studentList.isEmpty()) {
+        } else if (studentList.isEmpty() && attendanceStatus.value == Constants.ATTENDANCE_WAGING) {
             showConfirmationDialog.value = true
-//            return // FIXME: check this
         }
 
         LazyColumn(
             modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(studentList, key = { it.rollNumber }) { student ->
+            items(studentList.sortedBy { it.rollNumber }, key = { it.rollNumber }) { student ->
 
-                val state =
-                    rememberSwipeToDismissBoxState(initialValue = SwipeToDismissBoxValue.Settled,
-                        confirmValueChange = {
-                            if (it == SwipeToDismissBoxValue.StartToEnd) {
-                                viewModel.addAbsentee(student)
-                                studentList.remove(student)
-                            } else if (it == SwipeToDismissBoxValue.EndToStart) studentList.remove(
-                                student
-                            )
-                            true
-                        })
+                val state = rememberSwipeToDismissBoxState(
+                    initialValue = SwipeToDismissBoxValue.Settled,
+                    confirmValueChange = {
+
+                        attendanceStatus.value = Constants.ATTENDANCE_WAGING
+
+                        if (it == SwipeToDismissBoxValue.StartToEnd) {
+                            viewModel.addAbsentee(student)
+                            studentList.remove(student)
+                        } else if (it == SwipeToDismissBoxValue.EndToStart) studentList.remove(
+                            student
+                        )
+                        true
+                    })
 
                 SwipeToDismissBox(
                     state = state,
@@ -641,8 +645,8 @@ fun StudentList(viewModel: MainViewModel) {
                             )
                         }
                     },
-                    enableDismissFromStartToEnd = attendanceEntry == null,
-                    enableDismissFromEndToStart = attendanceEntry == null,
+                    enableDismissFromStartToEnd = attendanceStatus.value != Constants.ATTENDANCE_WAGED,
+                    enableDismissFromEndToStart = attendanceStatus.value != Constants.ATTENDANCE_WAGED,
                     content = @Composable {
                         Card(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
