@@ -158,12 +158,6 @@ fun InstituteLogin(
                                     if (task.isSuccessful) {
                                         buttonText = "Success!"
 
-                                        Toast.makeText(
-                                            navController.context,
-                                            "Fetching Data...",
-                                            Toast.LENGTH_SHORT,
-                                        ).show()
-
                                         SharedPreferenceHelper.set(
                                             navController.context, Constants.INSTITUTE_EMAIL, email
                                         )
@@ -176,7 +170,7 @@ fun InstituteLogin(
                                 }
 
                             delay(1000)
-                            buttonText = "Login"
+                            buttonText = "Fetching Data..."
                         }
                     },
                     content = {
@@ -198,17 +192,32 @@ fun populate(
     email: String,
     firebaseDatabase: FirebaseDatabase
 ) {
+
+    Toast.makeText(
+        navController.context, "Fetching Data...", Toast.LENGTH_LONG,
+    ).show()
+
     val instituteID = email.split("@")[1].split(".")[0].lowercase()
 
-    firebaseDatabase.getReference("institutions").child(instituteID).child("classList")
+    firebaseDatabase
+        .getReference("institutions")
+        .child(instituteID)
+        .child("classList")
         .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
-                if (dataSnapshot.value == null) return
+                if (dataSnapshot.value == null) {
+                    Toast.makeText(
+                        navController.context, "Something went wrong!", Toast.LENGTH_SHORT,
+                    ).show()
+                    return
+                }
 
                 dataSnapshot.children.forEach {
 
-                    if (it.child("teacherEmail").value == email) {
+                    if (it.child("teacherEmail").value.toString()
+                            .lowercase() == email.lowercase()
+                    ) {
 
                         it.child("studentList").children.forEach { new ->
                             viewModel.insert(
@@ -234,7 +243,7 @@ fun populate(
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(
                     navController.context,
-                    "Something went wrong!",
+                    "Operation cancelled!",
                     Toast.LENGTH_SHORT,
                 ).show()
             }
