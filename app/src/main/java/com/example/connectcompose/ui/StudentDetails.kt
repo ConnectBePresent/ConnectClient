@@ -265,7 +265,6 @@ fun StudentDetails(
                             viewModel,
                             firebaseDatabase
                         )
-
                     }
                 }
             }
