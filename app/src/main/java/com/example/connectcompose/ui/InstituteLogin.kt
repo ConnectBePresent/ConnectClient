@@ -1,6 +1,7 @@
 package com.example.connectcompose.ui
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -162,6 +163,12 @@ fun InstituteLogin(
                                             navController.context, Constants.INSTITUTE_EMAIL, email
                                         )
 
+                                        SharedPreferenceHelper.set(
+                                            navController.context,
+                                            Constants.USER_MODE,
+                                            Constants.INSTITUTE_MODE
+                                        )
+
                                         populate(navController, viewModel, email, firebaseDatabase)
 
                                     } else {
@@ -241,6 +248,7 @@ fun populate(
             }
 
             override fun onCancelled(error: DatabaseError) {
+                Log.e("vishnu", "onCancelled: ", error.toException())
                 Toast.makeText(
                     navController.context,
                     "Operation cancelled!",

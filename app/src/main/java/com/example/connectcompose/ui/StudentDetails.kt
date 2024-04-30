@@ -1,5 +1,7 @@
 package com.example.connectcompose.ui
 
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -86,6 +88,7 @@ import com.example.connectcompose.SharedPreferenceHelper
 import com.example.connectcompose.Student
 import com.example.connectcompose.Utils
 import com.example.connectcompose.application.Application
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -94,7 +97,16 @@ private lateinit var showAddStudentDialog: MutableState<Boolean>
 private lateinit var showConfirmationDialog: MutableState<Boolean>
 
 @Composable
-fun StudentDetails(navController: NavController, viewModel: MainViewModel) {
+fun StudentDetails(
+    navController: NavController,
+    viewModel: MainViewModel,
+    firebaseDatabase: FirebaseDatabase
+) {
+
+    val mode = SharedPreferenceHelper.get(
+        navController.context,
+        Constants.USER_MODE
+    )
 
     showAddStudentDialog = remember { mutableStateOf(false) }
     showConfirmationDialog = remember { mutableStateOf(false) }
@@ -107,11 +119,12 @@ fun StudentDetails(navController: NavController, viewModel: MainViewModel) {
             val coroutineScope = rememberCoroutineScope()
 
             Scaffold(floatingActionButton = {
-                FloatingActionButton(onClick = {
-                    showAddStudentDialog.value = true
-                }) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
-                }
+                if (mode == Constants.INDIVIDUAL_MODE)
+                    FloatingActionButton(onClick = {
+                        showAddStudentDialog.value = true
+                    }) {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
+                    }
             }) { padding ->
                 ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
                     ModalDrawerSheet(
@@ -247,7 +260,11 @@ fun StudentDetails(navController: NavController, viewModel: MainViewModel) {
                         }
 
                         if (showAddStudentDialog.value) StudentAddDialog(viewModel)
-                        if (showConfirmationDialog.value) ConfirmationDialog(viewModel)
+                        if (showConfirmationDialog.value) ConfirmationDialog(
+                            navController,
+                            viewModel,
+                            firebaseDatabase
+                        )
 
                     }
                 }
@@ -266,7 +283,11 @@ fun logout(navController: NavController, viewModel: MainViewModel) {
 }
 
 @Composable
-fun ConfirmationDialog(viewModel: MainViewModel) {
+fun ConfirmationDialog(
+    navController: NavController,
+    viewModel: MainViewModel,
+    firebaseDatabase: FirebaseDatabase
+) {
 
     val absenteeList = remember { mutableStateListOf<Student>() }
 
@@ -347,12 +368,11 @@ fun ConfirmationDialog(viewModel: MainViewModel) {
                         absenteeList
                     ) // TODO: runtime permission
 
-                    viewModel.insert(
-                        AttendanceEntry(
-                            Utils.getDate(),
-                            absenteeList
-                        )
-                    )
+                    val attendanceEntry = AttendanceEntry(Utils.getDate(), absenteeList)
+
+//                    viewModel.insert(attendanceEntry)
+
+                    pushAttendanceDetails(navController, attendanceEntry, firebaseDatabase)
 
                     viewModel.clearAbsenteeList()
                     showConfirmationDialog.value = false
@@ -370,6 +390,38 @@ fun ConfirmationDialog(viewModel: MainViewModel) {
             )
         }
     }
+}
+
+fun pushAttendanceDetails(
+    navController: NavController,
+    attendanceEntry: AttendanceEntry,
+    firebaseDatabase: FirebaseDatabase
+) {
+    Toast.makeText(
+        navController.context, "Pushing Attendance Data...", Toast.LENGTH_LONG,
+    ).show()
+
+    val email = SharedPreferenceHelper.get(navController.context, Constants.INSTITUTE_EMAIL)
+        .replace(".com", "") // cuz firebase doesn't support "." in it's paths
+
+    firebaseDatabase
+        .getReference("attendance")
+        .child(email)
+        .child(Utils.getDate())
+        .setValue(attendanceEntry.absenteeList)
+        .addOnSuccessListener {
+            Toast.makeText(
+                navController.context,
+                "Push successful!",
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+        .addOnFailureListener {
+            Log.e("vishnu", "pushAttendanceDetails: ", it)
+            Toast.makeText(
+                navController.context, "Something went wrong!", Toast.LENGTH_SHORT,
+            ).show()
+        }
 }
 
 @Composable

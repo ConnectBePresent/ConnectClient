@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(route = Constants.SCREEN_STUDENT_DETAILS) {
-                        StudentDetails(navController, viewModel)
+                        StudentDetails(navController, viewModel, firebaseDatabase)
                     }
                 }
 

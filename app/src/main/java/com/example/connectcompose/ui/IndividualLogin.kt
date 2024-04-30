@@ -85,6 +85,12 @@ fun IndividualLogin(navController: NavController) {
                                 name
                             )
 
+                            SharedPreferenceHelper.set(
+                                navController.context,
+                                Constants.USER_MODE,
+                                Constants.INDIVIDUAL_MODE
+                            )
+
                             navController.navigate(Constants.SCREEN_STUDENT_DETAILS) {
                                 popUpTo(Constants.SCREEN_INDIVIDUAL_LOGIN) { inclusive = true }
                             }
