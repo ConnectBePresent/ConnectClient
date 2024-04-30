@@ -82,7 +82,7 @@ import com.example.connectcompose.AttendanceEntry
 import com.example.connectcompose.Constants
 import com.example.connectcompose.MainViewModel
 import com.example.connectcompose.R
-import com.example.connectcompose.StoreData
+import com.example.connectcompose.SharedPreferenceHelper
 import com.example.connectcompose.Student
 import com.example.connectcompose.Utils
 import com.example.connectcompose.application.Application
@@ -125,10 +125,10 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                         var title by remember { mutableStateOf("Connect") }
 
                         LaunchedEffect(Unit) {
-                            StoreData(navController.context).getIndividualUserName
-                                .collect {
-                                    title = "Hi $it"
-                                }
+                            title = SharedPreferenceHelper.get(
+                                navController.context,
+                                Constants.INDIVIDUAL_USER_NAME
+                            )
                         }
 
                         Row(Modifier.padding(16.dp)) {
@@ -148,7 +148,9 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                                     .align(Alignment.CenterVertically),
                                 onClick = {
                                     coroutineScope.launch {
-                                        StoreData(context = navController.context).setIndividualUserName(
+                                        SharedPreferenceHelper.set(
+                                            navController.context,
+                                            Constants.INDIVIDUAL_USER_NAME,
                                             ""
                                         )
                                         navController.popBackStack(
@@ -222,7 +224,9 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                             IconButton(
                                 onClick = {
                                     coroutineScope.launch {
-                                        StoreData(context = navController.context).setIndividualUserName(
+                                        SharedPreferenceHelper.set(
+                                            navController.context,
+                                            Constants.INDIVIDUAL_USER_NAME,
                                             ""
                                         )
                                         navController.popBackStack(

@@ -26,9 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.connectcompose.Constants
-import com.example.connectcompose.StoreData
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.example.connectcompose.SharedPreferenceHelper
 
 @Composable
 fun IndividualLogin(navController: NavController) {
@@ -81,9 +79,11 @@ fun IndividualLogin(navController: NavController) {
                     onClick = {
                         if (name.isNotEmpty()) {
 
-                            GlobalScope.launch {
-                                StoreData(context = navController.context).setIndividualUserName(name)
-                            }
+                            SharedPreferenceHelper.set(
+                                navController.context,
+                                Constants.INDIVIDUAL_USER_NAME,
+                                name
+                            )
 
                             navController.navigate(Constants.SCREEN_INDIVIDUAL_STUDENT_LIST)
                         } else {

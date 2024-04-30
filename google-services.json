@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "332560500716",
+    "firebase_url": "https://connect-7bdb2-default-rtdb.firebaseio.com",
+    "project_id": "connect-7bdb2",
+    "storage_bucket": "connect-7bdb2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332560500716:android:cac3e6c52ab7d8922ea2c9",
+        "android_client_info": {
+          "package_name": "com.example.connectcompose"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxC52QD8BUoZBzupueO2A3pzXf70GFxjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332560500716:android:77d3b6a8cff2cd332ea2c9",
+        "android_client_info": {
+          "package_name": "s8.project.connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxC52QD8BUoZBzupueO2A3pzXf70GFxjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

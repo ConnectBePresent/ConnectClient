@@ -10,5 +10,9 @@ class Constants {
         const val SCREEN_INDIVIDUAL_LIST = "individual_list"
         const val SCREEN_INDIVIDUAL_REPORT = "individual_report"
         const val SCREEN_INDIVIDUAL_MESSAGE = "individual_message"
+
+        const val SHARED_PREF_NAME = "com.example.connectcompose.shared_preferences"
+        const val INDIVIDUAL_USER_NAME = "individual_user_name"
+        const val INSTITUTE_EMAIL = "institute_email"
     }
 }

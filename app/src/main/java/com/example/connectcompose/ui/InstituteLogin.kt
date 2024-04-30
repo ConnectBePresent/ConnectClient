@@ -1,6 +1,7 @@
 package com.example.connectcompose.ui
 
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,10 +37,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.connectcompose.Constants
 import com.example.connectcompose.R
+import com.example.connectcompose.SharedPreferenceHelper
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun InstituteLogin(navController: NavController) {
+fun InstituteLogin(navController: NavController, firebaseAuth: FirebaseAuth) {
     MaterialTheme {
         Surface(Modifier.fillMaxSize()) {
 
@@ -100,8 +107,7 @@ fun InstituteLogin(navController: NavController) {
                             passwordVisibility = !passwordVisibility
                         }) {
                             if (passwordVisibility) Icon(
-                                ImageVector.vectorResource(R.drawable.ic_lock_open),
-                                ""
+                                ImageVector.vectorResource(R.drawable.ic_lock_open), ""
                             )
                             else Icon(ImageVector.vectorResource(R.drawable.ic_lock), "")
                         }
@@ -109,11 +115,10 @@ fun InstituteLogin(navController: NavController) {
 
                 var buttonText by remember { mutableStateOf("Login") }
 
-                TextButton(
-                    modifier = Modifier
-                        .fillMaxWidth(0.5f)
-                        .align(Alignment.CenterHorizontally)
-                        .padding(16.dp),
+                TextButton(modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp),
                     border = BorderStroke(
                         1.dp, MaterialTheme.colorScheme.onSurface
                     ),
@@ -125,7 +130,7 @@ fun InstituteLogin(navController: NavController) {
                     shape = RoundedCornerShape(16.dp),
                     contentPadding = PaddingValues(12.dp),
                     onClick = {
-                        /*GlobalScope.launch {
+                        GlobalScope.launch {
 
                             if (email.isBlank() || password.isBlank()) {
 
@@ -136,36 +141,28 @@ fun InstituteLogin(navController: NavController) {
                                 return@launch
                             }
 
-                            val response = firebaseAuthAPI.signIn(
-                                User(
-                                    "$email@connectbepresent.com", password
-                                )
-                            )
+                            firebaseAuth.signInWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        buttonText = "Success!"
 
-                            if (response.isSuccessful) {
-                                buttonText = "Success!!"
-                                delay(1000)
+                                        Toast.makeText(
+                                            navController.context,
+                                            "Yayy!",
+                                            Toast.LENGTH_SHORT,
+                                        ).show()
 
-                                Settings().putString(
-                                    Constants.KEY_INSTITUTE_ID, email.lowercase()
-                                )
+                                        SharedPreferenceHelper.set(
+                                            navController.context, Constants.INSTITUTE_EMAIL, email
+                                        )
+                                    } else {
+                                        buttonText = "Something went wrong"
+                                    }
+                                }
 
-                                val institutionResponse =
-                                    firebaseDatabaseAPI.getInstituteDetails(email.lowercase())
-
-                                if (institutionResponse.isSuccessful && institutionResponse.body()?.classList != null) Settings().putString(
-                                    Constants.KEY_CLASS_LIST,
-                                    Gson().toJson(institutionResponse.body()?.classList)
-                                )
-
-                                isSuccess.value = true
-                            } else {
-                                buttonText = "Something went wrong, try again!"
-                                delay(1000)
-                                buttonText = "Login"
-                            }
-
-                        }*/
+                            delay(1000)
+                            buttonText = "Login"
+                        }
                     },
                     content = {
                         Text(
@@ -174,8 +171,7 @@ fun InstituteLogin(navController: NavController) {
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold
                         )
-                    }
-                )
+                    })
             }
         }
     }
