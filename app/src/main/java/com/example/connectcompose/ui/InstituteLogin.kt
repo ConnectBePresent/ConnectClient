@@ -225,9 +225,10 @@ fun populate(
                             "Fetching successful, redirecting...",
                             Toast.LENGTH_SHORT,
                         ).show()
+
+                        navController.navigate(Constants.SCREEN_STUDENT_DETAILS)
                     }
                 }
-
             }
 
             override fun onCancelled(error: DatabaseError) {

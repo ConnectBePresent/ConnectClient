@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.example.connectcompose.AttendanceEntry
 import com.example.connectcompose.Student
@@ -24,6 +25,9 @@ interface StudentDao {
     @Query("SELECT * FROM Student order by rollNumber asc")
     fun getAll(): LiveData<List<Student>>
 
+    @Query("DELETE FROM Student")
+    fun clearAllStudents()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(attendanceEntry: AttendanceEntry)
 
@@ -38,4 +42,13 @@ interface StudentDao {
 
     @Query("SELECT * FROM AttendanceEntry order by date desc")
     fun getAllAttendanceEntries(): LiveData<List<AttendanceEntry>>
+
+    @Query("DELETE FROM AttendanceEntry")
+    fun clearAllAttendanceEntries()
+
+    @Transaction
+    fun clearAll() {
+        clearAllStudents()
+        clearAllAttendanceEntries()
+    }
 }

@@ -53,4 +53,9 @@ class StudentRepository(private val studentDao: StudentDao) {
     fun getAllAttendanceEntries(): LiveData<List<AttendanceEntry>> {
         return attendanceList
     }
+
+    @WorkerThread
+    suspend fun clearAll() {
+        studentDao.clearAll()
+    }
 }

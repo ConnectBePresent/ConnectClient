@@ -5,19 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.connectcompose.application.Application
 import com.example.connectcompose.ui.IndividualLogin
-import com.example.connectcompose.ui.IndividualStudentListScreen
 import com.example.connectcompose.ui.InstituteLogin
+import com.example.connectcompose.ui.StudentDetails
 import com.example.connectcompose.ui.Welcome
 import com.example.connectcompose.ui.theme.ConnectComposeTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -38,29 +33,26 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        var startDestination = Constants.SCREEN_WELCOME
+
+        val userName = SharedPreferenceHelper.get(
+            this@MainActivity,
+            Constants.INDIVIDUAL_USER_NAME
+        )
+
+        val classEmail = SharedPreferenceHelper.get(
+            this@MainActivity,
+            Constants.INSTITUTE_EMAIL
+        )
+
+        if (userName.isNotEmpty() || classEmail.isNotEmpty())
+            startDestination = Constants.SCREEN_STUDENT_DETAILS
+
         firebaseAuth = Firebase.auth
         firebaseDatabase = Firebase.database
 
         setContent {
             ConnectComposeTheme {
-
-                var startDestination by remember { mutableStateOf(Constants.SCREEN_WELCOME) }
-
-                LaunchedEffect(Unit) {
-
-                    val userName = SharedPreferenceHelper.get(
-                        this@MainActivity,
-                        Constants.INDIVIDUAL_USER_NAME
-                    )
-
-                    if (userName.isNotEmpty())
-                        startDestination = Constants.SCREEN_INDIVIDUAL_STUDENT_LIST
-
-                    val classEmail = SharedPreferenceHelper.get(
-                        this@MainActivity,
-                        Constants.INSTITUTE_EMAIL
-                    )
-                }
 
                 val navController = rememberNavController()
 
@@ -80,8 +72,8 @@ class MainActivity : ComponentActivity() {
                         InstituteLogin(navController, viewModel, firebaseAuth, firebaseDatabase)
                     }
 
-                    composable(route = Constants.SCREEN_INDIVIDUAL_STUDENT_LIST) {
-                        IndividualStudentListScreen(navController, viewModel)
+                    composable(route = Constants.SCREEN_STUDENT_DETAILS) {
+                        StudentDetails(navController, viewModel)
                     }
                 }
 

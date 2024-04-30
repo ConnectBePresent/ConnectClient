@@ -112,6 +112,12 @@ class MainViewModel(
             e.printStackTrace()
         }
     }
+
+    fun clearAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.clearAll()
+        }
+    }
 }
 
 class MainViewModelFactory(private val application: Application) : ViewModelProvider.Factory {

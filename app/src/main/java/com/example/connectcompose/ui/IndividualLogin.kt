@@ -85,7 +85,9 @@ fun IndividualLogin(navController: NavController) {
                                 name
                             )
 
-                            navController.navigate(Constants.SCREEN_INDIVIDUAL_STUDENT_LIST)
+                            navController.navigate(Constants.SCREEN_STUDENT_DETAILS) {
+                                popUpTo(Constants.SCREEN_INDIVIDUAL_LOGIN) { inclusive = true }
+                            }
                         } else {
                             name = "Guest"
                         }

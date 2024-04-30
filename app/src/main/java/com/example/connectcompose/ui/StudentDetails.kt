@@ -94,7 +94,7 @@ private lateinit var showAddStudentDialog: MutableState<Boolean>
 private lateinit var showConfirmationDialog: MutableState<Boolean>
 
 @Composable
-fun IndividualStudentListScreen(navController: NavController, viewModel: MainViewModel) {
+fun StudentDetails(navController: NavController, viewModel: MainViewModel) {
 
     showAddStudentDialog = remember { mutableStateOf(false) }
     showConfirmationDialog = remember { mutableStateOf(false) }
@@ -148,15 +148,7 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                                     .align(Alignment.CenterVertically),
                                 onClick = {
                                     coroutineScope.launch {
-                                        SharedPreferenceHelper.set(
-                                            navController.context,
-                                            Constants.INDIVIDUAL_USER_NAME,
-                                            ""
-                                        )
-                                        navController.popBackStack(
-                                            Constants.SCREEN_WELCOME, false
-                                        )
-                                        navController.navigate(Constants.SCREEN_WELCOME)
+                                        logout(navController, viewModel)
                                     }
                                 },
                             ) {
@@ -224,15 +216,7 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                             IconButton(
                                 onClick = {
                                     coroutineScope.launch {
-                                        SharedPreferenceHelper.set(
-                                            navController.context,
-                                            Constants.INDIVIDUAL_USER_NAME,
-                                            ""
-                                        )
-                                        navController.popBackStack(
-                                            Constants.SCREEN_WELCOME, false
-                                        )
-                                        navController.navigate(Constants.SCREEN_WELCOME)
+                                        logout(navController, viewModel)
                                     }
                                 },
                             ) {
@@ -269,6 +253,15 @@ fun IndividualStudentListScreen(navController: NavController, viewModel: MainVie
                 }
             }
         }
+    }
+}
+
+fun logout(navController: NavController, viewModel: MainViewModel) {
+    SharedPreferenceHelper.clearAll(navController.context)
+    viewModel.clearAll()
+
+    navController.navigate(Constants.SCREEN_WELCOME) {
+        popUpTo(Constants.SCREEN_STUDENT_DETAILS) { inclusive = true }
     }
 }
 

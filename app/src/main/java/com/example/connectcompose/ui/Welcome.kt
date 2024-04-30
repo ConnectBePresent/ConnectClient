@@ -62,15 +62,6 @@ fun Welcome(navController: NavController) {
 
 @Composable
 fun TextSection(navController: NavController) {
-
-    /*var isUserNameStored by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        StoreData(context = navController.context).isIndividualUserNameStored.collect {
-            isUserNameStored = it
-        }
-    }*/
-
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -89,15 +80,17 @@ fun TextSection(navController: NavController) {
             color = MaterialTheme.colorScheme.surface
         )
 
-        Column(Modifier
-            .padding(32.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .clickable {
-//                    if (isUserNameStored) navController.navigate(Constants.SCREEN_INDIVIDUAL_STUDENT_LIST) else
-                navController.navigate(Constants.SCREEN_INDIVIDUAL_LOGIN)
-            }
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)) {
+        Column(
+            Modifier
+                .padding(32.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable {
+                    navController.navigate(Constants.SCREEN_INDIVIDUAL_LOGIN) {
+                        popUpTo(Constants.SCREEN_WELCOME) { inclusive = true }
+                    }
+                }
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)) {
             Text(
                 text = "Individual",
                 color = MaterialTheme.colorScheme.onBackground,
@@ -111,14 +104,17 @@ fun TextSection(navController: NavController) {
             )
         }
 
-        Column(Modifier
-            .padding(32.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .clickable {
-                navController.navigate(Constants.SCREEN_INSTITUTE_LOGIN)
-            }
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(16.dp)) {
+        Column(
+            Modifier
+                .padding(32.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable {
+                    navController.navigate(Constants.SCREEN_INSTITUTE_LOGIN) {
+                        popUpTo(Constants.SCREEN_WELCOME) { inclusive = true }
+                    }
+                }
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)) {
             Text(
                 text = "Institute", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp
             )

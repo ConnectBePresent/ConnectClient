@@ -15,5 +15,11 @@ class SharedPreferenceHelper {
                 Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE
             ).getString(key, "") ?: ""
         }
+
+        fun clearAll(context: Context) {
+            context.getSharedPreferences(
+                Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE
+            ).edit().clear().apply()
+        }
     }
 }
