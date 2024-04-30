@@ -8,7 +8,7 @@ class Constants {
         const val SCREEN_STUDENT_DETAILS = "student_details"
 
         const val SCREEN_INDIVIDUAL_LIST = "individual_list"
-        const val SCREEN_INDIVIDUAL_REPORT = "individual_report"
+        const val SCREEN_INDIVIDUAL_HISTORY = "individual_history"
         const val SCREEN_INDIVIDUAL_MESSAGE = "individual_message"
 
         const val SHARED_PREF_NAME = "com.example.connectcompose.shared_preferences"

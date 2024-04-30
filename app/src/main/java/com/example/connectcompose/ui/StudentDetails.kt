@@ -171,14 +171,14 @@ fun StudentDetails(
                         }
 
                         NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
-                            label = { Text(text = "Student Report") },
+                            label = { Text(text = "Attendance History") },
                             selected = false,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
                                     Constants.SCREEN_INDIVIDUAL_LIST, false
                                 )
-                                individualNavController.navigate(Constants.SCREEN_INDIVIDUAL_REPORT)
+                                individualNavController.navigate(Constants.SCREEN_INDIVIDUAL_HISTORY)
                             })
 
                         NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
@@ -249,8 +249,8 @@ fun StudentDetails(
                                 StudentList(viewModel)
                             }
 
-                            composable(route = Constants.SCREEN_INDIVIDUAL_REPORT) {
-                                StudentReport(individualNavController)
+                            composable(route = Constants.SCREEN_INDIVIDUAL_HISTORY) {
+                                AttendanceHistory(individualNavController)
                             }
                             composable(route = Constants.SCREEN_INDIVIDUAL_MESSAGE) {
                                 CustomMessage(individualNavController)
@@ -450,8 +450,8 @@ fun CustomMessage(individualNavController: NavHostController) {
 }
 
 @Composable
-fun StudentReport(individualNavController: NavHostController) {
-    Text("Student Report")
+fun AttendanceHistory(individualNavController: NavHostController) {
+    Text("Attendance History")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
