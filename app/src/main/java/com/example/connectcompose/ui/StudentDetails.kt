@@ -1,5 +1,7 @@
 package com.example.connectcompose.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -73,6 +75,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavController
@@ -98,14 +101,11 @@ private lateinit var showConfirmationDialog: MutableState<Boolean>
 
 @Composable
 fun StudentDetails(
-    navController: NavController,
-    viewModel: MainViewModel,
-    firebaseDatabase: FirebaseDatabase
+    navController: NavController, viewModel: MainViewModel, firebaseDatabase: FirebaseDatabase
 ) {
 
     val mode = SharedPreferenceHelper.get(
-        navController.context,
-        Constants.USER_MODE
+        navController.context, Constants.USER_MODE
     )
 
     showAddStudentDialog = remember { mutableStateOf(false) }
@@ -119,12 +119,11 @@ fun StudentDetails(
             val coroutineScope = rememberCoroutineScope()
 
             Scaffold(floatingActionButton = {
-                if (mode == Constants.INDIVIDUAL_MODE)
-                    FloatingActionButton(onClick = {
-                        showAddStudentDialog.value = true
-                    }) {
-                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
-                    }
+                if (mode == Constants.INDIVIDUAL_MODE) FloatingActionButton(onClick = {
+                    showAddStudentDialog.value = true
+                }) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
+                }
             }) { padding ->
                 ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
                     ModalDrawerSheet(
@@ -139,8 +138,7 @@ fun StudentDetails(
 
                         LaunchedEffect(Unit) {
                             title = SharedPreferenceHelper.get(
-                                navController.context,
-                                Constants.INDIVIDUAL_USER_NAME
+                                navController.context, Constants.INDIVIDUAL_USER_NAME
                             )
                         }
 
@@ -261,9 +259,7 @@ fun StudentDetails(
 
                         if (showAddStudentDialog.value) StudentAddDialog(viewModel)
                         if (showConfirmationDialog.value) ConfirmationDialog(
-                            navController,
-                            viewModel,
-                            firebaseDatabase
+                            navController, viewModel, firebaseDatabase
                         )
                     }
                 }
@@ -283,9 +279,7 @@ fun logout(navController: NavController, viewModel: MainViewModel) {
 
 @Composable
 fun ConfirmationDialog(
-    navController: NavController,
-    viewModel: MainViewModel,
-    firebaseDatabase: FirebaseDatabase
+    navController: NavController, viewModel: MainViewModel, firebaseDatabase: FirebaseDatabase
 ) {
 
     val absenteeList = remember { mutableStateListOf<Student>() }
@@ -353,6 +347,22 @@ fun ConfirmationDialog(
                 }
             }
 
+            val launcher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean -> // FIXME: doesn't get called for some reason
+                if (isGranted) {
+                    Utils.sendMessages(
+                        viewModel.getApplication<Application>().applicationContext, absenteeList
+                    )
+                } else {
+                    Toast.makeText(
+                        navController.context,
+                        "App requires SMS permission to work!!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
             TextButton(
                 modifier = Modifier
                     .padding(12.dp)
@@ -362,16 +372,32 @@ fun ConfirmationDialog(
                     .padding(4.dp),
                 onClick = {
 
-                    Utils.sendMessages(
-                        viewModel.getApplication<Application>().applicationContext,
-                        absenteeList
-                    ) // TODO: runtime permission
+                    if (ContextCompat.checkSelfPermission(
+                            navController.context,
+                            Manifest.permission.SEND_SMS
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        Utils.sendMessages(
+                            viewModel.getApplication<Application>().applicationContext,
+                            absenteeList
+                        )
+                    } else {
+                        launcher.launch(Manifest.permission.SEND_SMS)
+                    }
 
                     val attendanceEntry = AttendanceEntry(Utils.getDate(), absenteeList)
 
                     viewModel.insert(attendanceEntry)
 
-                    pushAttendanceDetails(navController, attendanceEntry, firebaseDatabase)
+                    val mode = SharedPreferenceHelper.get(
+                        navController.context, Constants.USER_MODE
+                    )
+
+                    if (mode == Constants.INSTITUTE_MODE) pushAttendanceDetails(
+                        navController,
+                        attendanceEntry,
+                        firebaseDatabase
+                    )
 
                     viewModel.clearAbsenteeList()
                     showConfirmationDialog.value = false
@@ -403,19 +429,14 @@ fun pushAttendanceDetails(
     val email = SharedPreferenceHelper.get(navController.context, Constants.INSTITUTE_EMAIL)
         .replace(".com", "") // cuz firebase doesn't support "." in it's paths
 
-    firebaseDatabase
-        .getReference("attendance")
-        .child(email)
-        .child(Utils.getDate())
-        .setValue(attendanceEntry.absenteeList)
-        .addOnSuccessListener {
+    firebaseDatabase.getReference("attendance").child(email).child(Utils.getDate())
+        .setValue(attendanceEntry.absenteeList).addOnSuccessListener {
             Toast.makeText(
                 navController.context,
                 "Push successful!",
                 Toast.LENGTH_SHORT,
             ).show()
-        }
-        .addOnFailureListener {
+        }.addOnFailureListener {
             Log.e("vishnu", "pushAttendanceDetails: ", it)
             Toast.makeText(
                 navController.context, "Something went wrong!", Toast.LENGTH_SHORT,
@@ -445,10 +466,9 @@ fun StudentList(viewModel: MainViewModel) {
 
         var attendanceEntry: AttendanceEntry? = null
 
-        viewModel.getAttendanceEntry(today)
-            .observeForever {
-                attendanceEntry = it
-            }
+        viewModel.getAttendanceEntry(today).observeForever {
+            attendanceEntry = it
+        }
 
         if (attendanceEntry != null) {
 
@@ -512,11 +532,10 @@ fun StudentList(viewModel: MainViewModel) {
         val studentList = remember { mutableStateListOf<Student>() }
 
         LaunchedEffect(viewModel.getAbsenteeList()) {
-            viewModel.getAllStudents()
-                .observe(lifecycleOwner) { list ->
-                    studentList.clear()
-                    studentList.addAll(list.toMutableStateList())
-                }
+            viewModel.getAllStudents().observe(lifecycleOwner) { list ->
+                studentList.clear()
+                studentList.addAll(list.toMutableStateList())
+            }
         }
 
         if (studentList.isEmpty() && viewModel.isAbsenteeListEmpty()) {
@@ -580,17 +599,17 @@ fun StudentList(viewModel: MainViewModel) {
         ) {
             items(studentList, key = { it.rollNumber }) { student ->
 
-                val state = rememberSwipeToDismissBoxState(
-                    initialValue = SwipeToDismissBoxValue.Settled,
-                    confirmValueChange = {
-                        if (it == SwipeToDismissBoxValue.StartToEnd) {
-                            viewModel.addAbsentee(student)
-                            studentList.remove(student)
-                        } else if (it == SwipeToDismissBoxValue.EndToStart)
-                            studentList.remove(student)
-                        true
-                    }
-                )
+                val state =
+                    rememberSwipeToDismissBoxState(initialValue = SwipeToDismissBoxValue.Settled,
+                        confirmValueChange = {
+                            if (it == SwipeToDismissBoxValue.StartToEnd) {
+                                viewModel.addAbsentee(student)
+                                studentList.remove(student)
+                            } else if (it == SwipeToDismissBoxValue.EndToStart) studentList.remove(
+                                student
+                            )
+                            true
+                        })
 
                 SwipeToDismissBox(
                     state = state,
