@@ -249,8 +249,7 @@ fun StudentDetails(
                             startDestination = Constants.SCREEN_INDIVIDUAL_LIST
                         ) {
                             composable(route = Constants.SCREEN_INDIVIDUAL_LIST) {
-//                                StudentList(viewModel) // FIXME!
-                                AttendanceHistory(individualNavController, viewModel)
+                                StudentList(viewModel)
                             }
 
                             composable(route = Constants.SCREEN_INDIVIDUAL_HISTORY) {
