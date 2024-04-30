@@ -462,7 +462,7 @@ fun StudentList(viewModel: MainViewModel) {
 
         val today = Utils.getDate()
 
-        var attendanceEntry = remember { mutableStateOf<AttendanceEntry?>(null) }
+        val attendanceEntry = remember { mutableStateOf<AttendanceEntry?>(null) }
 
         LaunchedEffect(attendanceStatus.value) {
             viewModel.getAttendanceEntry(today).observeForever {
@@ -471,6 +471,8 @@ fun StudentList(viewModel: MainViewModel) {
         }
 
         if (attendanceEntry.value != null) {
+
+            attendanceStatus.value = Constants.ATTENDANCE_WAGED
 
             Text(
                 modifier = Modifier
