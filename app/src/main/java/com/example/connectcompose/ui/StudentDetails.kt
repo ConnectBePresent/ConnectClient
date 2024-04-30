@@ -249,11 +249,12 @@ fun StudentDetails(
                             startDestination = Constants.SCREEN_INDIVIDUAL_LIST
                         ) {
                             composable(route = Constants.SCREEN_INDIVIDUAL_LIST) {
-                                StudentList(viewModel)
+//                                StudentList(viewModel) // FIXME!
+                                AttendanceHistory(individualNavController, viewModel)
                             }
 
                             composable(route = Constants.SCREEN_INDIVIDUAL_HISTORY) {
-                                AttendanceHistory(individualNavController)
+                                AttendanceHistory(individualNavController, viewModel)
                             }
                             composable(route = Constants.SCREEN_INDIVIDUAL_MESSAGE) {
                                 CustomMessage(individualNavController)
@@ -448,11 +449,6 @@ fun pushAttendanceDetails(
 @Composable
 fun CustomMessage(individualNavController: NavHostController) {
     Text("Custom Message")
-}
-
-@Composable
-fun AttendanceHistory(individualNavController: NavHostController) {
-    Text("Attendance History")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
