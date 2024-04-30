@@ -370,7 +370,7 @@ fun ConfirmationDialog(
 
                     val attendanceEntry = AttendanceEntry(Utils.getDate(), absenteeList)
 
-//                    viewModel.insert(attendanceEntry)
+                    viewModel.insert(attendanceEntry)
 
                     pushAttendanceDetails(navController, attendanceEntry, firebaseDatabase)
 
