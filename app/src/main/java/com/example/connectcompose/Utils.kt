@@ -15,7 +15,7 @@ class Utils {
                 .format(Calendar.getInstance().time)
         }
 
-        fun sendMessages(context: Context?, absenteeList: List<Student>) {
+        fun sendMessages(context: Context, absenteeList: List<Student>) {
 
 //            if (BuildConfig.DEBUG) return
 
@@ -29,11 +29,36 @@ class Utils {
                             SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
                                 .format(Calendar.getInstance().time)
 
-                    SmsManager.getDefault()
+                    context.getSystemService(SmsManager::class.java)
                         .sendTextMessage(
                             phoneNumber,
                             null,
                             text,
+                            null,
+                            null
+                        )
+                }
+
+                Toast.makeText(context, "Messages sent!", Toast.LENGTH_SHORT).show()
+            } catch (e: SecurityException) {
+                Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                e.printStackTrace()
+            }
+        }
+
+        fun sendCustomMessage(context: Context, message: String, studentList: List<Student>) {
+
+//            if (BuildConfig.DEBUG) return
+
+            Toast.makeText(context, "Sending messages...", Toast.LENGTH_SHORT).show()
+
+            try {
+                for ((_, _, phoneNumber) in studentList) {
+                    context.getSystemService(SmsManager::class.java)
+                        .sendTextMessage(
+                            phoneNumber,
+                            null,
+                            message,
                             null,
                             null
                         )

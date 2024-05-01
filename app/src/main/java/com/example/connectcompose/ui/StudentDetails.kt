@@ -79,7 +79,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -122,11 +121,12 @@ fun StudentDetails(
             val coroutineScope = rememberCoroutineScope()
 
             Scaffold(floatingActionButton = {
-                if (mode == Constants.INDIVIDUAL_MODE) FloatingActionButton(onClick = {
-                    showAddStudentDialog.value = true
-                }) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
-                }
+                if (mode == Constants.INDIVIDUAL_MODE)
+                    FloatingActionButton(onClick = {
+                        showAddStudentDialog.value = true
+                    }) {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
+                    }
             }) { padding ->
                 ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
                     ModalDrawerSheet(
@@ -270,7 +270,7 @@ fun StudentDetails(
                                 )
                             }
                             composable(route = Constants.SCREEN_INDIVIDUAL_MESSAGE) {
-                                CustomMessage(individualNavController)
+                                CustomMessage(individualNavController, viewModel)
                             }
                         }
 
@@ -457,11 +457,6 @@ fun pushAttendanceDetails(
                 navController.context, "Something went wrong!", Toast.LENGTH_SHORT,
             ).show()
         }
-}
-
-@Composable
-fun CustomMessage(individualNavController: NavHostController) {
-    Text("Custom Message")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
