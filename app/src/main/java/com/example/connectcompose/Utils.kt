@@ -17,7 +17,7 @@ class Utils {
 
         fun sendMessages(context: Context?, absenteeList: List<Student>) {
 
-            if (BuildConfig.DEBUG) return
+//            if (BuildConfig.DEBUG) return
 
             Toast.makeText(context, "Sending messages...", Toast.LENGTH_SHORT).show()
 
