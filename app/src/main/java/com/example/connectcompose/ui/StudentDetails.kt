@@ -402,7 +402,7 @@ fun ConfirmationDialog(
 
                     val attendanceEntry = AttendanceEntry(Utils.getDate(), absenteeList)
 
-                    viewModel.insert(attendanceEntry)
+                    viewModel.insert(attendanceEntry) // FIXME
 
                     val mode = SharedPreferenceHelper.get(
                         navController.context, Constants.USER_MODE
@@ -548,8 +548,14 @@ fun StudentList(viewModel: MainViewModel) {
 
         LaunchedEffect(attendanceStatus.value) {
             viewModel.getAllStudents().observeForever { list ->
+
+                if (list.isEmpty())
+                    return@observeForever
+
                 studentList.clear()
                 studentList.addAll(list.toMutableStateList())
+
+                attendanceStatus.value = Constants.ATTENDANCE_WAGING
             }
         }
 
@@ -616,9 +622,6 @@ fun StudentList(viewModel: MainViewModel) {
                 val state = rememberSwipeToDismissBoxState(
                     initialValue = SwipeToDismissBoxValue.Settled,
                     confirmValueChange = {
-
-                        attendanceStatus.value = Constants.ATTENDANCE_WAGING
-
                         if (it == SwipeToDismissBoxValue.StartToEnd) {
                             viewModel.addAbsentee(student)
                             studentList.remove(student)

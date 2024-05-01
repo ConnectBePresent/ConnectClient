@@ -44,7 +44,8 @@ class MainViewModel(
     }
 
     fun addAbsentee(student: Student) {
-        absenteeList.add(student)
+        if (!absenteeList.contains(student)) // fix for multiple entries getting inserted
+            absenteeList.add(student)
     }
 
     fun isAbsenteeListEmpty(): Boolean {
