@@ -174,8 +174,18 @@ fun StudentDetails(
                         }
 
                         NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                            label = { Text(text = "Student List") },
+                            selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_LIST,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                individualNavController.popBackStack(
+                                    Constants.SCREEN_INDIVIDUAL_LIST, false
+                                )
+                            })
+
+                        NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
                             label = { Text(text = "Attendance History") },
-                            selected = false,
+                            selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_HISTORY,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
@@ -186,7 +196,7 @@ fun StudentDetails(
 
                         NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
                             label = { Text(text = "Custom Message") },
-                            selected = false,
+                            selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_MESSAGE,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
