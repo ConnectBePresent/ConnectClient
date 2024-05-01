@@ -1,5 +1,7 @@
 package com.example.connectcompose.ui
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,8 +39,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.connectcompose.AttendanceEntry
+import com.example.connectcompose.Constants
 import com.example.connectcompose.MainViewModel
+import com.example.connectcompose.SharedPreferenceHelper
 import com.example.connectcompose.Student
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
 import io.github.boguszpawlowski.composecalendar.day.DayState
 import io.github.boguszpawlowski.composecalendar.header.MonthState
@@ -52,7 +61,11 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun AttendanceHistory(individualNavController: NavHostController, viewModel: MainViewModel) {
+fun AttendanceHistory(
+    individualNavController: NavHostController,
+    viewModel: MainViewModel,
+    firebaseDatabase: FirebaseDatabase
+) {
 
     Column {
 
@@ -71,7 +84,7 @@ fun AttendanceHistory(individualNavController: NavHostController, viewModel: Mai
         val date = remember { mutableStateOf("") }
         val absenteeList = remember { mutableStateListOf<Student>() }
 
-        LaunchedEffect(calendarState.selectionState.selection) {
+        LaunchedEffect(calendarState.selectionState.selection, absenteeList) {
 
             if (calendarState.selectionState.selection.isEmpty()) {
                 absenteeList.clear()
@@ -82,10 +95,16 @@ fun AttendanceHistory(individualNavController: NavHostController, viewModel: Mai
                 DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
             )
 
+            val mode =
+                SharedPreferenceHelper.get(individualNavController.context, Constants.USER_MODE)
+
             viewModel.getAttendanceEntry(date.value).observeForever {
                 absenteeList.clear()
 
                 if (it?.absenteeList != null) absenteeList.addAll(it.absenteeList)
+                else if (mode == Constants.INSTITUTE_MODE) fetchAttendance(
+                    individualNavController, date.value, firebaseDatabase, viewModel
+                )
             }
         }
 
@@ -132,6 +151,66 @@ fun AttendanceHistory(individualNavController: NavHostController, viewModel: Mai
             }
         }
     }
+}
+
+fun fetchAttendance(
+    navController: NavHostController,
+    date: String,
+    firebaseDatabase: FirebaseDatabase,
+    viewModel: MainViewModel
+) {
+
+    Toast.makeText(
+        navController.context, "Local history not found...\nFetching Data...", Toast.LENGTH_LONG,
+    ).show()
+
+    val email = SharedPreferenceHelper.get(navController.context, Constants.INSTITUTE_EMAIL)
+        .replace(".com", "") // cuz firebase doesn't support "." in it's paths
+
+    firebaseDatabase.getReference("attendance").child(email).child(date)
+        .addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (!snapshot.exists()) {
+                    Toast.makeText(
+                        navController.context,
+                        "No history found on remote",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                    return
+                }
+
+                val studentList = ArrayList<Student>()
+
+                snapshot.children.forEach {
+                    studentList.add(
+                        Student(
+                            it.child("rollNumber").value.toString().toInt(),
+                            it.child("name").value.toString(),
+                            it.child("parentPhoneNumber").value.toString()
+                        )
+                    )
+                }
+
+                viewModel.insert(AttendanceEntry(date, studentList))
+
+                Toast.makeText(
+                    navController.context,
+                    "Fetch successful!",
+                    Toast.LENGTH_SHORT,
+                ).show()
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("vishnu", "onCancelled: ", error.toException())
+                Toast.makeText(
+                    navController.context,
+                    "Operation cancelled!",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        })
 }
 
 @Composable

@@ -253,7 +253,11 @@ fun StudentDetails(
                             }
 
                             composable(route = Constants.SCREEN_INDIVIDUAL_HISTORY) {
-                                AttendanceHistory(individualNavController, viewModel)
+                                AttendanceHistory(
+                                    individualNavController,
+                                    viewModel,
+                                    firebaseDatabase
+                                )
                             }
                             composable(route = Constants.SCREEN_INDIVIDUAL_MESSAGE) {
                                 CustomMessage(individualNavController)
@@ -457,15 +461,17 @@ fun StudentList(viewModel: MainViewModel) {
 
         val today = Utils.getDate()
 
-        val attendanceEntry = remember { mutableStateOf<AttendanceEntry?>(null) }
+        val absenteeList = remember { mutableStateListOf<Student>() }
 
         LaunchedEffect(attendanceStatus.value) {
             viewModel.getAttendanceEntry(today).observeForever {
-                attendanceEntry.value = it
+                absenteeList.clear()
+
+                if (it?.absenteeList != null) absenteeList.addAll(it.absenteeList.toMutableList())
             }
         }
 
-        if (attendanceEntry.value != null) {
+        if (absenteeList.isNotEmpty()) {
 
             attendanceStatus.value = Constants.ATTENDANCE_WAGED
 
@@ -483,7 +489,7 @@ fun StudentList(viewModel: MainViewModel) {
                 modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
-                    attendanceEntry.value!!.absenteeList.sortedBy { it.rollNumber },
+                    absenteeList.sortedBy { it.rollNumber },
                     key = { it.rollNumber }) { student ->
                     Card(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
