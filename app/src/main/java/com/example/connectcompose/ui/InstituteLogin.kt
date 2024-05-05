@@ -157,7 +157,7 @@ fun InstituteLogin(
                             firebaseAuth.signInWithEmailAndPassword(email, password)
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
-                                        buttonText = "Success!"
+                                        buttonText = "Success!\nFetching Data..."
 
                                         SharedPreferenceHelper.set(
                                             navController.context, Constants.INSTITUTE_EMAIL, email
@@ -175,9 +175,6 @@ fun InstituteLogin(
                                         buttonText = "Something went wrong"
                                     }
                                 }
-
-                            delay(1000)
-                            buttonText = "Fetching Data..."
                         }
                     },
                     content = {
@@ -200,9 +197,9 @@ fun populate(
     firebaseDatabase: FirebaseDatabase
 ) {
 
-    Toast.makeText(
-        navController.context, "Fetching Data...", Toast.LENGTH_LONG,
-    ).show()
+//    Toast.makeText(
+//        navController.context, "Fetching Data...", Toast.LENGTH_LONG,
+//    ).show()
 
     val instituteID = email.split("@")[1].split(".")[0].lowercase()
 
