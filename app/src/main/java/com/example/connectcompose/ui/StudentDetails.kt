@@ -444,7 +444,11 @@ fun pushAttendanceDetails(
     val email = SharedPreferenceHelper.get(navController.context, Constants.INSTITUTE_EMAIL)
         .replace(".com", "") // cuz firebase doesn't support "." in it's paths
 
-    firebaseDatabase.getReference("attendance").child(email).child(Utils.getDate())
+    val reference = firebaseDatabase.getReference("attendance")
+
+    reference.keepSynced(true)
+
+    reference.child(email).child(Utils.getDate())
         .setValue(attendanceEntry.absenteeList).addOnSuccessListener {
             Toast.makeText(
                 navController.context,

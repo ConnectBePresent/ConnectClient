@@ -50,6 +50,7 @@ class MainActivity : ComponentActivity() {
 
         firebaseAuth = Firebase.auth
         firebaseDatabase = Firebase.database
+        firebaseDatabase.setPersistenceEnabled(true)
 
         setContent {
             ConnectComposeTheme {

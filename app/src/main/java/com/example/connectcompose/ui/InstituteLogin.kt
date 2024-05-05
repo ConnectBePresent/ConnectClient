@@ -203,11 +203,14 @@ fun populate(
 
     val instituteID = email.split("@")[1].split(".")[0].lowercase()
 
-    firebaseDatabase
+    val reference = firebaseDatabase
         .getReference("institutions")
         .child(instituteID)
         .child("classList")
-        .addListenerForSingleValueEvent(object : ValueEventListener {
+
+    reference.keepSynced(true)
+
+    reference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 if (dataSnapshot.value == null) {

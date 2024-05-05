@@ -167,7 +167,11 @@ fun fetchAttendance(
     val email = SharedPreferenceHelper.get(navController.context, Constants.INSTITUTE_EMAIL)
         .replace(".com", "") // cuz firebase doesn't support "." in it's paths
 
-    firebaseDatabase.getReference("attendance").child(email).child(date)
+    val reference = firebaseDatabase.getReference("attendance")
+
+    reference.keepSynced(true)
+
+    reference.child(email).child(date)
         .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
