@@ -148,7 +148,7 @@ fun StudentDetails(
                                     Constants.INSTITUTE_EMAIL
                                 ).replace(".com", "").uppercase()
                             else
-                                "Hi" + SharedPreferenceHelper.get(
+                                "Hi " + SharedPreferenceHelper.get(
                                     navController.context,
                                     Constants.INDIVIDUAL_USER_NAME
                                 )
@@ -184,13 +184,18 @@ fun StudentDetails(
                             }
                         }
 
-                        NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
+                        NavigationDrawerItem(
+                            modifier = Modifier
+                                .padding(16.dp, 16.dp, 16.dp, 0.dp),
                             label = { Text(text = "Student List") },
                             selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_LIST,
                             colors = NavigationDrawerItemDefaults.colors(
                                 selectedIconColor = MaterialTheme.colorScheme.surface,
-                                unselectedContainerColor = MaterialTheme.colorScheme.background
+                                unselectedContainerColor = MaterialTheme.colorScheme.background,
+                                selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unselectedTextColor = MaterialTheme.colorScheme.onBackground
                             ),
+                            shape = RoundedCornerShape(8.dp),
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
@@ -203,8 +208,11 @@ fun StudentDetails(
                             selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_HISTORY,
                             colors = NavigationDrawerItemDefaults.colors(
                                 selectedIconColor = MaterialTheme.colorScheme.surface,
-                                unselectedContainerColor = MaterialTheme.colorScheme.background
+                                unselectedContainerColor = MaterialTheme.colorScheme.background,
+                                selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unselectedTextColor = MaterialTheme.colorScheme.onBackground
                             ),
+                            shape = RoundedCornerShape(8.dp),
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
@@ -218,8 +226,11 @@ fun StudentDetails(
                             selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_MESSAGE,
                             colors = NavigationDrawerItemDefaults.colors(
                                 selectedIconColor = MaterialTheme.colorScheme.surface,
-                                unselectedContainerColor = MaterialTheme.colorScheme.background
+                                unselectedContainerColor = MaterialTheme.colorScheme.background,
+                                selectedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unselectedTextColor = MaterialTheme.colorScheme.onBackground
                             ),
+                            shape = RoundedCornerShape(8.dp),
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
@@ -349,8 +360,8 @@ fun ConfirmationDialog(
                         .padding(8.dp)
                         .align(Alignment.Start),
                     text = "Confirm Absentees",
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 24.sp,
                 )
 
@@ -448,10 +459,10 @@ fun ConfirmationDialog(
                     content = {
                         Text(
                             text = buildAnnotatedString {
-                                withStyle(SpanStyle(color = Color.White)) {
+                                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
                                     append("Confirm")
                                 }
-                            }, fontSize = 12.sp, fontWeight = FontWeight.Light
+                            }, fontSize = 16.sp, fontWeight = FontWeight.Light
                         )
                     },
                 )
