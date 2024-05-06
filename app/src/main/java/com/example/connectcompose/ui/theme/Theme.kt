@@ -20,18 +20,18 @@ private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
     secondary = PurpleGrey80,
     tertiary = Pink80,
-    background = Color(0xE4111111),
+    background = Color(0xFF16181F),
     onBackground = Color(0xFFFFFFFF),
-    surface = Color(0xFF111111),
+    surface = Color(0xFF2A2F3F),
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
-    background = Color(0xFFFFFBFE),
+    background = Color(0xFFFFFFFF),
     onBackground = Color(0xFF000000),
-    surface = Color(0x9AFFFBFE),
+    surface = Color(0xFFD1D2D4),
 
     /* Other default colors to override
     surface = Color(0xFFFFFBFE),
@@ -47,7 +47,7 @@ private val LightColorScheme = lightColorScheme(
 fun ConnectComposeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // very very important for color scheme to work ;___;
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

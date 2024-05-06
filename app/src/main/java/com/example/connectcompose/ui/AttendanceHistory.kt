@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -76,6 +78,7 @@ fun AttendanceHistory(
         SelectableCalendar(
             firstDayOfWeek = DayOfWeek.MONDAY,
             calendarState = calendarState,
+            daysOfWeekHeader = { DaysOfWeekHeader(it) },
             monthHeader = { MonthHeader(it) },
             dayContent = { Day(it) },
             horizontalSwipeEnabled = false
@@ -215,6 +218,26 @@ fun fetchAttendance(
                 ).show()
             }
         })
+}
+
+@Composable
+fun DaysOfWeekHeader(
+    daysOfWeek: List<DayOfWeek>,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier) {
+        daysOfWeek.forEach { dayOfWeek ->
+            Text(
+                textAlign = TextAlign.Center,
+                text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelMedium,
+                modifier = modifier
+                    .weight(1f)
+                    .wrapContentHeight()
+            )
+        }
+    }
 }
 
 @Composable

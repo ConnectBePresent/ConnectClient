@@ -25,8 +25,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -121,12 +121,11 @@ fun StudentDetails(
             val coroutineScope = rememberCoroutineScope()
 
             Scaffold(floatingActionButton = {
-                if (mode == Constants.INDIVIDUAL_MODE)
-                    FloatingActionButton(onClick = {
-                        showAddStudentDialog.value = true
-                    }) {
-                        Icon(imageVector = Icons.Default.Edit, contentDescription = "Add contact")
-                    }
+                if (mode == Constants.INDIVIDUAL_MODE) FloatingActionButton(onClick = {
+                    showAddStudentDialog.value = true
+                }) {
+                    Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add contact")
+                }
             }) { padding ->
                 ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
                     ModalDrawerSheet(
@@ -314,120 +313,125 @@ fun ConfirmationDialog(
         Card(
             modifier = Modifier
                 .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         ) {
 
-            Text(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.Start),
-                text = "Confirm Absentees",
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 24.sp,
-            )
+            Column(Modifier.padding(16.dp)) {
 
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(absenteeList) { student ->
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        border = CardDefaults.outlinedCardBorder(),
-                        modifier = Modifier
-                            .padding(all = 8.dp)
-                            .fillMaxSize(),
-                        shape = RoundedCornerShape(16.dp),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(all = 8.dp)
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.Start),
+                    text = "Confirm Absentees",
+                    fontWeight = FontWeight.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 24.sp,
+                )
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(absenteeList) { student ->
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                            border = CardDefaults.outlinedCardBorder(),
+                            modifier = Modifier
+                                .padding(all = 8.dp)
+                                .fillMaxSize(),
+                            shape = RoundedCornerShape(16.dp),
                         ) {
-                            Text(
-                                "${student.rollNumber} • ${student.name}",
-                                modifier = Modifier.padding(all = 8.dp),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Column(
+                                modifier = Modifier.padding(all = 8.dp)
+                            ) {
+                                Text(
+                                    "${student.rollNumber} • ${student.name}",
+                                    modifier = Modifier.padding(all = 8.dp),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.SemiBold
+                                )
 
-                            Text(
-                                text = "Ph: ${student.parentPhoneNumber}",
-                                modifier = Modifier.padding(all = 8.dp),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
+                                Text(
+                                    text = "Ph: ${student.parentPhoneNumber}",
+                                    modifier = Modifier.padding(all = 8.dp),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            val launcher = rememberLauncherForActivityResult(
-                ActivityResultContracts.RequestPermission()
-            ) { isGranted: Boolean -> // FIXME: doesn't get called for some reason
-                if (isGranted) {
-                    Utils.sendMessages(
-                        viewModel.getApplication<Application>().applicationContext, absenteeList
-                    )
-                } else {
-                    Toast.makeText(
-                        navController.context,
-                        "App requires SMS permission to work!!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
-            TextButton(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .align(Alignment.End)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF292D32))
-                    .padding(4.dp),
-                onClick = {
-
-                    if (ContextCompat.checkSelfPermission(
-                            navController.context, Manifest.permission.SEND_SMS
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
+                val launcher = rememberLauncherForActivityResult(
+                    ActivityResultContracts.RequestPermission()
+                ) { isGranted: Boolean -> // FIXME: doesn't get called for some reason
+                    if (isGranted) {
                         Utils.sendMessages(
                             viewModel.getApplication<Application>().applicationContext, absenteeList
                         )
                     } else {
-                        launcher.launch(Manifest.permission.SEND_SMS)
+                        Toast.makeText(
+                            navController.context,
+                            "App requires SMS permission to work!!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
+                }
 
-                    val attendanceEntry = AttendanceEntry(Utils.getDate(), absenteeList)
+                TextButton(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(8.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onBackground),
+                    shape = RoundedCornerShape(16.dp),
+                    contentPadding = PaddingValues(12.dp),
+                    onClick = {
 
-                    viewModel.insert(attendanceEntry) // FIXME
+                        if (ContextCompat.checkSelfPermission(
+                                navController.context, Manifest.permission.SEND_SMS
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            Utils.sendMessages(
+                                viewModel.getApplication<Application>().applicationContext,
+                                absenteeList
+                            )
+                        } else {
+                            launcher.launch(Manifest.permission.SEND_SMS)
+                        }
 
-                    val mode = SharedPreferenceHelper.get(
-                        navController.context, Constants.USER_MODE
-                    )
+                        val attendanceEntry = AttendanceEntry(Utils.getDate(), absenteeList)
 
-                    if (mode == Constants.INSTITUTE_MODE) pushAttendanceDetails(
-                        navController, attendanceEntry, firebaseDatabase
-                    )
+                        viewModel.insert(attendanceEntry) // FIXME
 
-                    viewModel.clearAbsenteeList()
-                    attendanceStatus.value = Constants.ATTENDANCE_WAGED
+                        val mode = SharedPreferenceHelper.get(
+                            navController.context, Constants.USER_MODE
+                        )
 
-                    showConfirmationDialog.value = false
-                },
-                content = {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(color = Color.White)) {
-                                append("Confirm")
-                            }
-                        }, fontSize = 12.sp, fontWeight = FontWeight.Light
-                    )
-                },
-                shape = RoundedCornerShape(32.dp)
-            )
+                        if (mode == Constants.INSTITUTE_MODE) pushAttendanceDetails(
+                            navController, attendanceEntry, firebaseDatabase
+                        )
+
+                        viewModel.clearAbsenteeList()
+                        attendanceStatus.value = Constants.ATTENDANCE_WAGED
+
+                        showConfirmationDialog.value = false
+                    },
+                    content = {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(SpanStyle(color = Color.White)) {
+                                    append("Confirm")
+                                }
+                            }, fontSize = 12.sp, fontWeight = FontWeight.Light
+                        )
+                    },
+                )
+            }
         }
     }
 }
@@ -448,8 +452,8 @@ fun pushAttendanceDetails(
 
     reference.keepSynced(true)
 
-    reference.child(email).child(Utils.getDate())
-        .setValue(attendanceEntry.absenteeList).addOnSuccessListener {
+    reference.child(email).child(Utils.getDate()).setValue(attendanceEntry.absenteeList)
+        .addOnSuccessListener {
             Toast.makeText(
                 navController.context,
                 "Push successful!",
@@ -497,11 +501,9 @@ fun StudentList(viewModel: MainViewModel) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(
-                    absenteeList.sortedBy { it.rollNumber },
-                    key = { it.rollNumber }) { student ->
+                items(absenteeList.sortedBy { it.rollNumber }, key = { it.rollNumber }) { student ->
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                         border = CardDefaults.outlinedCardBorder(),
                         modifier = Modifier
@@ -548,8 +550,7 @@ fun StudentList(viewModel: MainViewModel) {
         LaunchedEffect(attendanceStatus.value) {
             viewModel.getAllStudents().observeForever { list ->
 
-                if (list.isEmpty())
-                    return@observeForever
+                if (list.isEmpty()) return@observeForever
 
                 studentList.clear()
                 studentList.addAll(list.toMutableStateList())
@@ -618,17 +619,17 @@ fun StudentList(viewModel: MainViewModel) {
         ) {
             items(studentList.sortedBy { it.rollNumber }, key = { it.rollNumber }) { student ->
 
-                val state = rememberSwipeToDismissBoxState(
-                    initialValue = SwipeToDismissBoxValue.Settled,
-                    confirmValueChange = {
-                        if (it == SwipeToDismissBoxValue.StartToEnd) {
-                            viewModel.addAbsentee(student)
-                            studentList.remove(student)
-                        } else if (it == SwipeToDismissBoxValue.EndToStart) studentList.remove(
-                            student
-                        )
-                        true
-                    })
+                val state =
+                    rememberSwipeToDismissBoxState(initialValue = SwipeToDismissBoxValue.Settled,
+                        confirmValueChange = {
+                            if (it == SwipeToDismissBoxValue.StartToEnd) {
+                                viewModel.addAbsentee(student)
+                                studentList.remove(student)
+                            } else if (it == SwipeToDismissBoxValue.EndToStart) studentList.remove(
+                                student
+                            )
+                            true
+                        })
 
                 SwipeToDismissBox(
                     state = state,
@@ -664,7 +665,7 @@ fun StudentList(viewModel: MainViewModel) {
                     enableDismissFromEndToStart = attendanceStatus.value != Constants.ATTENDANCE_WAGED,
                     content = @Composable {
                         Card(
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                             border = CardDefaults.outlinedCardBorder(),
                             modifier = Modifier
@@ -707,122 +708,125 @@ fun StudentAddDialog(viewModel: MainViewModel) {
         Card(
             modifier = Modifier
                 .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
         ) {
 
-            Text(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.Start),
-                text = "Add Student",
-                fontWeight = FontWeight.Black,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 24.sp,
-            )
+            Column(Modifier.padding(16.dp)) {
 
-            var rollNumber by remember { mutableIntStateOf(0) }
-            var name by remember { mutableStateOf("") }
-            var phoneNumber by remember { mutableStateOf("") }
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.Start),
+                    text = "Add Student",
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 24.sp,
+                )
 
-            OutlinedTextField(modifier = Modifier.padding(8.dp),
-                value = rollNumber.toString(),
-                onValueChange = {
-                    rollNumber = try {
-                        it.trim().toInt()
-                    } catch (e: NumberFormatException) {
-                        0
-                    }
-                },
-                label = {
-                    Text(
-                        "Roll Number"
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                leadingIcon = @Composable {
-                    Icon(
-                        painterResource(id = R.drawable.ic_person), "person icon"
-                    )
-                })
+                var rollNumber by remember { mutableIntStateOf(0) }
+                var name by remember { mutableStateOf("") }
+                var phoneNumber by remember { mutableStateOf("") }
 
-            OutlinedTextField(modifier = Modifier.padding(8.dp),
-                value = name,
-                onValueChange = {
-                    name = it
-                },
-                label = {
-                    Text(
-                        "Student Name"
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                leadingIcon = @Composable {
-                    Icon(
-                        painterResource(id = R.drawable.ic_badge), "name icon"
-                    )
-                })
-
-            OutlinedTextField(modifier = Modifier.padding(8.dp),
-                value = phoneNumber,
-                onValueChange = {
-                    phoneNumber = it
-                },
-                label = {
-                    Text(
-                        "Parent Phone Number"
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                leadingIcon = @Composable {
-                    Icon(
-                        painterResource(id = R.drawable.ic_phone), "phone icon"
-                    )
-                })
-
-            var buttonText by remember { mutableStateOf("Add Student") }
-
-            TextButton(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .align(Alignment.End)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFF292D32))
-                    .padding(4.dp),
-                onClick = {
-                    GlobalScope.launch {
-                        if (rollNumber == 0 || name.isEmpty() || phoneNumber.isEmpty()) {
-                            buttonText = "Fields empty!!"
-                            delay(1000)
-                            buttonText = "Add Student"
-                            return@launch
+                OutlinedTextField(modifier = Modifier.padding(8.dp),
+                    value = rollNumber.toString(),
+                    onValueChange = {
+                        rollNumber = try {
+                            it.trim().toInt()
+                        } catch (e: NumberFormatException) {
+                            0
                         }
-
-                        viewModel.insert(
-                            Student(
-                                rollNumber, name, phoneNumber
-                            )
+                    },
+                    label = {
+                        Text(
+                            "Roll Number"
                         )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    leadingIcon = @Composable {
+                        Icon(
+                            painterResource(id = R.drawable.ic_person), "person icon"
+                        )
+                    })
 
-                        buttonText = "Success"
-                        delay(500)
+                OutlinedTextField(modifier = Modifier.padding(8.dp),
+                    value = name,
+                    onValueChange = {
+                        name = it
+                    },
+                    label = {
+                        Text(
+                            "Student Name"
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    leadingIcon = @Composable {
+                        Icon(
+                            painterResource(id = R.drawable.ic_badge), "name icon"
+                        )
+                    })
 
-                        showAddStudentDialog.value = false
-                    }
-                },
-                content = {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(color = Color.White)) {
-                                append(buttonText)
+                OutlinedTextField(modifier = Modifier.padding(8.dp),
+                    value = phoneNumber,
+                    onValueChange = {
+                        phoneNumber = it
+                    },
+                    label = {
+                        Text(
+                            "Parent Phone Number"
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    leadingIcon = @Composable {
+                        Icon(
+                            painterResource(id = R.drawable.ic_phone), "phone icon"
+                        )
+                    })
+
+                var buttonText by remember { mutableStateOf("Add Student") }
+
+                TextButton(
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .padding(8.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onBackground),
+                    shape = RoundedCornerShape(16.dp),
+                    contentPadding = PaddingValues(12.dp),
+                    onClick = {
+                        GlobalScope.launch {
+                            if (rollNumber == 0 || name.isEmpty() || phoneNumber.isEmpty()) {
+                                buttonText = "Fields empty!!"
+                                delay(1000)
+                                buttonText = "Add Student"
+                                return@launch
                             }
-                        }, fontSize = 12.sp, fontWeight = FontWeight.Light
-                    )
-                },
-                shape = RoundedCornerShape(32.dp)
-            )
 
+                            viewModel.insert(
+                                Student(
+                                    rollNumber, name, phoneNumber
+                                )
+                            )
+
+                            buttonText = "Success"
+                            delay(500)
+
+                            showAddStudentDialog.value = false
+                        }
+                    },
+                    content = {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+                                    append(buttonText)
+                                }
+                            }, fontSize = 16.sp, fontWeight = FontWeight.Light
+                        )
+                    },
+                )
+
+            }
         }
     }
 }

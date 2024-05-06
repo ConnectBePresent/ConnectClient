@@ -31,7 +31,7 @@ fun Welcome(navController: NavController) {
 
     MaterialTheme {
 
-        Surface(Modifier.fillMaxSize()) {
+        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Column {
 
                 Text(
@@ -67,7 +67,7 @@ fun TextSection(navController: NavController) {
             .wrapContentSize()
             .padding(32.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.onSurface),
+            .background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
@@ -77,7 +77,7 @@ fun TextSection(navController: NavController) {
             text = "User Mode",
             fontSize = 24.sp,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.surface
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Column(
@@ -89,7 +89,7 @@ fun TextSection(navController: NavController) {
                         popUpTo(Constants.SCREEN_WELCOME) { inclusive = true }
                     }
                 }
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)) {
             Text(
                 text = "Individual",
@@ -97,8 +97,8 @@ fun TextSection(navController: NavController) {
                 fontSize = 20.sp
             )
             Text(
-                modifier = Modifier.padding(8.dp),
-                text = "Here the platform is use individually and the user would have the full control of the system",
+                modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp),
+                text = "Use Connect without affiliation with any institutions. Ideal for a single class.",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp
             )
@@ -113,14 +113,14 @@ fun TextSection(navController: NavController) {
                         popUpTo(Constants.SCREEN_WELCOME) { inclusive = true }
                     }
                 }
-                .background(MaterialTheme.colorScheme.surface)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)) {
             Text(
                 text = "Institute", color = MaterialTheme.colorScheme.onBackground, fontSize = 20.sp
             )
             Text(
-                modifier = Modifier.padding(8.dp),
-                text = "The admin Panel is needed for the assigning the classroom and also provide the user with username and password",
+                modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp),
+                text = "Connect is affiliated to your institute. Requires username & password from your institute.",
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp
             )
