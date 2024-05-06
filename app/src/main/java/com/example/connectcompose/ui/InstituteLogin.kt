@@ -4,13 +4,14 @@ package com.example.connectcompose.ui
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
@@ -60,12 +61,17 @@ fun InstituteLogin(
     firebaseDatabase: FirebaseDatabase
 ) {
     MaterialTheme {
-        Surface(Modifier.fillMaxSize()) {
+        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
 
             Column(
                 Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(), verticalArrangement = Arrangement.Center
+                    .wrapContentSize()
+                    .border(
+                        BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                        RoundedCornerShape(8.dp)
+                    )
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.Center
             ) {
 
                 Text(
@@ -131,7 +137,7 @@ fun InstituteLogin(
                 TextButton(modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .align(Alignment.CenterHorizontally)
-                    .padding(16.dp),
+                    .padding(16.dp, 16.dp, 16.dp, 0.dp),
                     border = BorderStroke(
                         1.dp, MaterialTheme.colorScheme.onSurface
                     ),
@@ -211,50 +217,50 @@ fun populate(
     reference.keepSynced(true)
 
     reference.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
 
-                if (dataSnapshot.value == null) {
-                    Toast.makeText(
-                        navController.context, "Something went wrong!", Toast.LENGTH_SHORT,
-                    ).show()
-                    return
-                }
-
-                dataSnapshot.children.forEach {
-
-                    if (it.child("teacherEmail").value.toString()
-                            .lowercase() == email.lowercase()
-                    ) {
-
-                        it.child("studentList").children.forEach { new ->
-                            viewModel.insert(
-                                Student(
-                                    new.child("rollNumber").value.toString().toInt(),
-                                    new.child("name").value.toString(),
-                                    new.child("parentPhoneNumber").value.toString()
-                                )
-                            )
-                        }
-
-                        Toast.makeText(
-                            navController.context,
-                            "Fetching successful, redirecting...",
-                            Toast.LENGTH_SHORT,
-                        ).show()
-
-                        navController.navigate(Constants.SCREEN_STUDENT_DETAILS)
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("vishnu", "onCancelled: ", error.toException())
+            if (dataSnapshot.value == null) {
                 Toast.makeText(
-                    navController.context,
-                    "Operation cancelled!",
-                    Toast.LENGTH_SHORT,
+                    navController.context, "Something went wrong!", Toast.LENGTH_SHORT,
                 ).show()
+                return
             }
 
-        })
+            dataSnapshot.children.forEach {
+
+                if (it.child("teacherEmail").value.toString()
+                        .lowercase() == email.lowercase()
+                ) {
+
+                    it.child("studentList").children.forEach { new ->
+                        viewModel.insert(
+                            Student(
+                                new.child("rollNumber").value.toString().toInt(),
+                                new.child("name").value.toString(),
+                                new.child("parentPhoneNumber").value.toString()
+                            )
+                        )
+                    }
+
+                    Toast.makeText(
+                        navController.context,
+                        "Fetching successful, redirecting...",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+
+                    navController.navigate(Constants.SCREEN_STUDENT_DETAILS)
+                }
+            }
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            Log.e("vishnu", "onCancelled: ", error.toException())
+            Toast.makeText(
+                navController.context,
+                "Operation cancelled!",
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+
+    })
 }

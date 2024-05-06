@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -133,24 +134,35 @@ fun StudentDetails(
                             .fillMaxSize()
                             .padding(32.dp, 64.dp, 32.dp, 32.dp)
                         else if (drawerState.isAnimationRunning) Modifier.padding(16.dp)
-                        else Modifier.padding(0.dp), drawerShape = RoundedCornerShape(16.dp)
+                        else Modifier.padding(0.dp),
+                        drawerShape = RoundedCornerShape(16.dp),
+                        drawerContainerColor = MaterialTheme.colorScheme.background
                     ) {
 
                         var title by remember { mutableStateOf("Connect") }
 
                         LaunchedEffect(Unit) {
-                            title = SharedPreferenceHelper.get(
-                                navController.context, Constants.INDIVIDUAL_USER_NAME
-                            )
+                            title = if (mode == Constants.INSTITUTE_MODE)
+                                SharedPreferenceHelper.get(
+                                    navController.context,
+                                    Constants.INSTITUTE_EMAIL
+                                ).replace(".com", "").uppercase()
+                            else
+                                "Hi" + SharedPreferenceHelper.get(
+                                    navController.context,
+                                    Constants.INDIVIDUAL_USER_NAME
+                                )
                         }
 
                         Row(Modifier.padding(16.dp)) {
                             Text(
-                                text = "Hi $title",
+                                text = title,
                                 modifier = Modifier
                                     .padding(16.dp, 16.dp, 16.dp, 0.dp)
                                     .align(Alignment.CenterVertically),
-                                fontSize = 24.sp
+                                fontSize = 24.sp,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontWeight = FontWeight.Medium
                             )
 
                             Spacer(modifier = Modifier.weight(1f))
@@ -175,6 +187,10 @@ fun StudentDetails(
                         NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
                             label = { Text(text = "Student List") },
                             selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_LIST,
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.surface,
+                                unselectedContainerColor = MaterialTheme.colorScheme.background
+                            ),
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
@@ -185,6 +201,10 @@ fun StudentDetails(
                         NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
                             label = { Text(text = "Attendance History") },
                             selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_HISTORY,
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.surface,
+                                unselectedContainerColor = MaterialTheme.colorScheme.background
+                            ),
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(
@@ -196,6 +216,10 @@ fun StudentDetails(
                         NavigationDrawerItem(modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
                             label = { Text(text = "Custom Message") },
                             selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_MESSAGE,
+                            colors = NavigationDrawerItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.surface,
+                                unselectedContainerColor = MaterialTheme.colorScheme.background
+                            ),
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
                                 individualNavController.popBackStack(

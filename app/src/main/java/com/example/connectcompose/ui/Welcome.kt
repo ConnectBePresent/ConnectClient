@@ -1,7 +1,9 @@
 package com.example.connectcompose.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,12 +39,12 @@ fun Welcome(navController: NavController) {
                 Text(
                     modifier = Modifier.padding(32.dp, 32.dp, 32.dp, 0.dp),
                     text = "Connect - Be Present",
-                    fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 32.sp,
                 )
 
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.weight(0.5f))
 
                 Image(
                     modifier = Modifier
@@ -52,9 +54,83 @@ fun Welcome(navController: NavController) {
                     contentDescription = "The image is of institute"
                 )
 
-                Spacer(Modifier.weight(1f))
+                Spacer(Modifier.weight(0.5f))
 
-                TextSection(navController = navController)
+                Column(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(32.dp)
+                        .border(
+                            BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                            RoundedCornerShape(8.dp)
+                        ),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        text = "Operation mode",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+
+                    Column(
+                        Modifier
+                            .padding(32.dp)
+                            .border(
+                                BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                                RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                navController.navigate(Constants.SCREEN_INDIVIDUAL_LOGIN) {
+                                    popUpTo(Constants.SCREEN_WELCOME) { inclusive = true }
+                                }
+                            }
+                            .padding(16.dp)) {
+                        Text(
+                            text = "Individual",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 20.sp
+                        )
+                        Text(
+                            modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp),
+                            text = "Use Connect without affiliation with any institutions. Ideal for a single class.",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp
+                        )
+                    }
+
+                    Column(
+                        Modifier
+                            .padding(32.dp)
+                            .border(
+                                BorderStroke(1.dp, MaterialTheme.colorScheme.onBackground),
+                                RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                navController.navigate(Constants.SCREEN_INSTITUTE_LOGIN) {
+                                    popUpTo(Constants.SCREEN_WELCOME) { inclusive = true }
+                                }
+                            }
+                            .padding(16.dp)) {
+                        Text(
+                            text = "Institute",
+                            color = MaterialTheme.colorScheme.onBackground,
+                            fontSize = 20.sp
+                        )
+                        Text(
+                            modifier = Modifier.padding(0.dp, 8.dp, 8.dp, 8.dp),
+                            text = "Connect is affiliated to your institute. Requires username & password from your institute.",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 12.sp
+                        )
+                    }
+
+                }
+
             }
         }
     }
