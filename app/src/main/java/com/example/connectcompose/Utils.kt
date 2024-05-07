@@ -29,7 +29,7 @@ class Utils {
                             SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault())
                                 .format(Calendar.getInstance().time)
 
-                    context.getSystemService(SmsManager::class.java)
+                    SmsManager.getDefault()
                         .sendTextMessage(
                             phoneNumber,
                             null,
@@ -54,7 +54,7 @@ class Utils {
 
             try {
                 for ((_, _, phoneNumber) in studentList) {
-                    context.getSystemService(SmsManager::class.java)
+                    SmsManager.getDefault()
                         .sendTextMessage(
                             phoneNumber,
                             null,
