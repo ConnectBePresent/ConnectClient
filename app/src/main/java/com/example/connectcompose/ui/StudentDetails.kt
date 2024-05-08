@@ -441,39 +441,6 @@ fun ConfirmationDialog(
     }
 }
 
-@Composable
-fun StudentCard(student: Student) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = CardDefaults.outlinedCardBorder(),
-        modifier = Modifier
-            .padding(all = 8.dp)
-            .fillMaxSize(),
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Column(
-            modifier = Modifier.padding(all = 8.dp)
-        ) {
-            Text(
-                "${student.rollNumber} • ${student.name}",
-                modifier = Modifier.padding(all = 8.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Text(
-                text = "Ph: ${student.parentPhoneNumber}",
-                modifier = Modifier.padding(all = 8.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-    }
-
-}
-
 fun pushAttendanceDetails(
     navController: NavController,
     attendanceEntry: AttendanceEntry,

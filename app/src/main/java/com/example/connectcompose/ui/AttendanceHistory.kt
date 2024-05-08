@@ -12,18 +12,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -68,7 +64,6 @@ fun AttendanceHistory(
     viewModel: MainViewModel,
     firebaseDatabase: FirebaseDatabase
 ) {
-
     Column {
 
         val calendarState = rememberSelectableCalendarState(
@@ -122,36 +117,8 @@ fun AttendanceHistory(
         )
 
         LazyColumn {
-            items(absenteeList.sortedBy { it.rollNumber }, key = { it.rollNumber }) { student ->
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                    border = CardDefaults.outlinedCardBorder(),
-                    modifier = Modifier
-                        .padding(all = 8.dp)
-                        .fillMaxSize(),
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(all = 8.dp)
-                    ) {
-                        Text(
-                            "${student.rollNumber} • ${student.name}",
-                            modifier = Modifier.padding(all = 8.dp),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-
-                        Text(
-                            text = "Ph: ${student.parentPhoneNumber}",
-                            modifier = Modifier.padding(all = 8.dp),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                }
-            }
+            items(absenteeList.sortedBy { it.rollNumber },
+                key = { it.rollNumber }) { StudentCard(it) }
         }
     }
 }
@@ -174,8 +141,7 @@ fun fetchAttendance(
 
     reference.keepSynced(true)
 
-    reference.child(email).child(date)
-        .addListenerForSingleValueEvent(object : ValueEventListener {
+    reference.child(email).child(date).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 if (!snapshot.exists()) {
