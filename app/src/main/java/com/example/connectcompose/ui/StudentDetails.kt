@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -142,15 +143,12 @@ fun StudentDetails(
                         var title by remember { mutableStateOf("Connect") }
 
                         LaunchedEffect(Unit) {
-                            title = if (mode == Constants.INSTITUTE_MODE)
-                                SharedPreferenceHelper.get(
-                                    navController.context,
-                                    Constants.INSTITUTE_EMAIL
+                            title =
+                                if (mode == Constants.INSTITUTE_MODE) SharedPreferenceHelper.get(
+                                    navController.context, Constants.INSTITUTE_EMAIL
                                 ).replace(".com", "").uppercase()
-                            else
-                                "Hi " + SharedPreferenceHelper.get(
-                                    navController.context,
-                                    Constants.INDIVIDUAL_USER_NAME
+                                else "Hi " + SharedPreferenceHelper.get(
+                                    navController.context, Constants.INDIVIDUAL_USER_NAME
                                 )
                         }
 
@@ -185,8 +183,7 @@ fun StudentDetails(
                         }
 
                         NavigationDrawerItem(
-                            modifier = Modifier
-                                .padding(16.dp, 16.dp, 16.dp, 0.dp),
+                            modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 0.dp),
                             label = { Text(text = "Student List") },
                             selected = individualNavController.currentDestination?.route == Constants.SCREEN_INDIVIDUAL_LIST,
                             colors = NavigationDrawerItemDefaults.colors(
@@ -298,9 +295,7 @@ fun StudentDetails(
 
                             composable(route = Constants.SCREEN_INDIVIDUAL_HISTORY) {
                                 AttendanceHistory(
-                                    individualNavController,
-                                    viewModel,
-                                    firebaseDatabase
+                                    individualNavController, viewModel, firebaseDatabase
                                 )
                             }
                             composable(route = Constants.SCREEN_INDIVIDUAL_MESSAGE) {
@@ -366,39 +361,14 @@ fun ConfirmationDialog(
                 )
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .weight(1f, fill = false),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(absenteeList) { student ->
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                            border = CardDefaults.outlinedCardBorder(),
-                            modifier = Modifier
-                                .padding(all = 8.dp)
-                                .fillMaxSize(),
-                            shape = RoundedCornerShape(16.dp),
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(all = 8.dp)
-                            ) {
-                                Text(
-                                    "${student.rollNumber} • ${student.name}",
-                                    modifier = Modifier.padding(all = 8.dp),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-
-                                Text(
-                                    text = "Ph: ${student.parentPhoneNumber}",
-                                    modifier = Modifier.padding(all = 8.dp),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                            }
-                        }
-                    }
+                    items(absenteeList.sortedBy { it.rollNumber },
+                        key = { it.rollNumber }) { StudentCard(it) }
                 }
 
                 val launcher = rememberLauncherForActivityResult(
@@ -471,6 +441,39 @@ fun ConfirmationDialog(
     }
 }
 
+@Composable
+fun StudentCard(student: Student) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = CardDefaults.outlinedCardBorder(),
+        modifier = Modifier
+            .padding(all = 8.dp)
+            .fillMaxSize(),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column(
+            modifier = Modifier.padding(all = 8.dp)
+        ) {
+            Text(
+                "${student.rollNumber} • ${student.name}",
+                modifier = Modifier.padding(all = 8.dp),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            Text(
+                text = "Ph: ${student.parentPhoneNumber}",
+                modifier = Modifier.padding(all = 8.dp),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+
+}
+
 fun pushAttendanceDetails(
     navController: NavController,
     attendanceEntry: AttendanceEntry,
@@ -505,7 +508,9 @@ fun pushAttendanceDetails(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentList(viewModel: MainViewModel) {
-    Column {
+    Column()
+//    (Modifier.verticalScroll(rememberScrollState()))
+    {
 
         val today = Utils.getDate()
 
@@ -534,38 +539,13 @@ fun StudentList(viewModel: MainViewModel) {
             )
 
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.5f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(absenteeList.sortedBy { it.rollNumber }, key = { it.rollNumber }) { student ->
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        border = CardDefaults.outlinedCardBorder(),
-                        modifier = Modifier
-                            .padding(all = 8.dp)
-                            .fillMaxSize(),
-                        shape = RoundedCornerShape(16.dp),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(all = 8.dp)
-                        ) {
-                            Text(
-                                "${student.rollNumber} • ${student.name}",
-                                modifier = Modifier.padding(all = 8.dp),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
-
-                            Text(
-                                text = "Ph: ${student.parentPhoneNumber}",
-                                modifier = Modifier.padding(all = 8.dp),
-                                color = MaterialTheme.colorScheme.onBackground,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
-                    }
-                }
+                items(absenteeList.sortedBy { it.rollNumber },
+                    key = { it.rollNumber }) { StudentCard(it) }
             }
 
         }
@@ -650,7 +630,10 @@ fun StudentList(viewModel: MainViewModel) {
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(studentList.sortedBy { it.rollNumber }, key = { it.rollNumber }) { student ->
 
@@ -666,8 +649,7 @@ fun StudentList(viewModel: MainViewModel) {
                             true
                         })
 
-                SwipeToDismissBox(
-                    state = state,
+                SwipeToDismissBox(state = state,
                     backgroundContent = @Composable {
                         Box(
                             modifier = Modifier
@@ -698,36 +680,7 @@ fun StudentList(viewModel: MainViewModel) {
                     },
                     enableDismissFromStartToEnd = attendanceStatus.value != Constants.ATTENDANCE_WAGED,
                     enableDismissFromEndToStart = attendanceStatus.value != Constants.ATTENDANCE_WAGED,
-                    content = @Composable {
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                            border = CardDefaults.outlinedCardBorder(),
-                            modifier = Modifier
-                                .padding(all = 8.dp)
-                                .fillMaxSize(),
-                            shape = RoundedCornerShape(16.dp),
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(all = 8.dp)
-                            ) {
-                                Text(
-                                    "${student.rollNumber} • ${student.name}",
-                                    modifier = Modifier.padding(all = 8.dp),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-
-                                Text(
-                                    text = "Ph: ${student.parentPhoneNumber}",
-                                    modifier = Modifier.padding(all = 8.dp),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                            }
-                        }
-                    })
+                    content = { StudentCard(student) })
             }
         }
     }
